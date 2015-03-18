@@ -3,16 +3,16 @@ module ActiveFedora::Aggregation
   class FileAssociation
 
     # @param [ActiveFedora::Base] parent
-    # @param [Hash] options
+    # @param [Reflection] reflection
     # @opts options [String] class_name name of the class in the association
-    def initialize(parent, options)
+    def initialize(parent, reflection)
       @parent = parent
-      @options = options
+      @reflection = reflection
     end
 
     # TODO this moves to reflection
     def klass
-      @klass ||= @options[:class_name].constantize
+      @reflection.klass
     end
 
     def == other

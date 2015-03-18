@@ -7,7 +7,7 @@ module ActiveFedora::Aggregation
     # has_one :aggregation
     # has_many :generic_files, through: :aggregation
     def reader
-      @file_association ||= FileAssociation.new(@owner, { class_name: 'GenericFile' } )
+      @file_association ||= FileAssociation.new(@owner, @reflection)
     end
 
     def writer(vals)

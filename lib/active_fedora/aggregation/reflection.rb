@@ -3,5 +3,9 @@ module ActiveFedora::Aggregation
     def association_class
       Association
     end
+
+    def collection?
+      true
+    end
   end
 end
