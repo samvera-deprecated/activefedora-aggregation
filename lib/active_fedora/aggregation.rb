@@ -11,7 +11,7 @@ module ActiveFedora
       autoload :FileAssociation
       autoload :Proxy
       autoload :Builder
-      autoload :Association
+      autoload :ThroughAssociation
       autoload :Reflection
       autoload :BaseExtension
     end

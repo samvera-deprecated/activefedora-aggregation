@@ -1,5 +1,5 @@
 module ActiveFedora::Aggregation
-  class Association
+  class ThroughAssociation
     def initialize(owner, reflection)
       @owner, @reflection = owner, reflection
     end
