@@ -7,7 +7,7 @@ describe ActiveFedora::Aggregation::FileAssociation do
     end
 
     class Image < ActiveFedora::Base
-      include ActiveFedora::Aggregation::Builder
+      aggregates :generic_files
     end
   end
   let(:generic_file1) { GenericFile.create }

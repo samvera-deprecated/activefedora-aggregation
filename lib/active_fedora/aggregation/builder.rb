@@ -1,31 +1,44 @@
 module ActiveFedora::Aggregation
-  module Builder
-    extend ActiveSupport::Concern
+  class Builder < ActiveFedora::Associations::Builder::CollectionAssociation
+    self.macro = :aggregation
 
-    included do
-      after_save :save_aggregator
+    def build
+      reflection = super
+      configure_dependency
+      reflection
     end
 
-    def save_aggregator
-      generic_files.save
+    def self.define_readers(mixin, name)
+      super
+      mixin.redefine_method("#{name.to_s.singularize}_ids") do
+        association(name).ids_reader
+      end
     end
 
-    # has_one :aggregation
-    # has_many :generic_files, through: :aggregation
-    def generic_files
-      @file_association ||= FileAssociation.new(self, { class_name: 'GenericFile' } )
+    def self.define_writers(mixin, name)
+      super
+      mixin.redefine_method("#{name.to_s.singularize}_ids=") do |ids|
+        association(name).ids_writer(ids)
+      end
     end
 
-    def generic_files=(vals)
-      generic_files.target = vals
-    end
+    private
 
-    def generic_file_ids=(vals)
-      generic_files.target_ids = vals
-    end
+      def configure_dependency
+        define_save_dependency_method
+        model.after_save dependency_method_name
+      end
 
-    def generic_file_ids
-      generic_files.target_ids
-    end
+      def define_save_dependency_method
+        name = self.name
+        model.send(:define_method, dependency_method_name) do
+          send(name).save
+        end
+      end
+
+      def dependency_method_name
+        "aggregator_dependent_for_#{name}"
+      end
+
   end
 end
