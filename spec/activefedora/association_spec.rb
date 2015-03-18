@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ActiveFedora::Aggregation::FileAssociation do
+describe ActiveFedora::Aggregation::Association do
   before do
     class GenericFile < ActiveFedora::Base
       contains :original

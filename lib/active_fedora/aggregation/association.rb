@@ -1,6 +1,5 @@
 module ActiveFedora::Aggregation
-  # TODO this is a has_one (child) association
-  class FileAssociation
+  class Association
 
     # @param [ActiveFedora::Base] parent
     # @param [Reflection] reflection
@@ -10,7 +9,6 @@ module ActiveFedora::Aggregation
       @reflection = reflection
     end
 
-    # TODO this moves to reflection
     def klass
       @reflection.klass
     end

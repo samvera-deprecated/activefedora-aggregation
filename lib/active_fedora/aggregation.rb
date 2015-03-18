@@ -8,7 +8,7 @@ module ActiveFedora
     extend ActiveSupport::Autoload
     eager_autoload do
       autoload :Aggregator
-      autoload :FileAssociation
+      autoload :Association
       autoload :Proxy
       autoload :Builder
       autoload :ThroughAssociation
