@@ -1,11 +1,7 @@
 require 'spec_helper'
 
-describe Activefedora::Aggregation do
+describe ActiveFedora::Aggregation do
   it 'has a version number' do
-    expect(Activefedora::Aggregation::VERSION).not_to be nil
-  end
-
-  it 'does something useful' do
-    expect(false).to eq(true)
+    expect(ActiveFedora::Aggregation::VERSION).not_to be nil
   end
 end
