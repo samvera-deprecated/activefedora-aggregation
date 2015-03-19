@@ -1,3 +1,4 @@
+[![Gem Version](https://badge.fury.io/rb/activefedora-aggregation.svg)](http://badge.fury.io/rb/activefedora-aggregation) [![Build Status](https://travis-ci.org/curationexperts/activefedora-aggregation.svg?branch=v0.1.0)](https://travis-ci.org/curationexperts/activefedora-aggregation)
 # ActiveFedora::Aggregation
 
 Aggregations for ActiveFedora.
