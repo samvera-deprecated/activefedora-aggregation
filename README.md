@@ -37,7 +37,7 @@ Here's what the graph looks like:
    <http://www.iana.org/assignments/relation/last> <http://127.0.0.1:8983/fedora/rest/dev/my_image/files/9cc70b3d-c9d7-4cfc-b504-adbcb0bdfb3d>;
    <http://www.w3.org/ns/ldp#contains> <http://127.0.0.1:8983/fedora/rest/dev/my_image/files/5a5af870-594b-4966-93f6-0348402583f0>,
      <http://127.0.0.1:8983/fedora/rest/dev/my_image/files/9cc70b3d-c9d7-4cfc-b504-adbcb0bdfb3d>;
-   <info:fedora/fedora-system:def/model#hasModel> "ActiveFedora::Aggregation::Aggregator" .
+   <info:fedora/fedora-system:def/model#hasModel> "ActiveFedora::Aggregation::ProxyContainer" .
 
 <http://127.0.0.1:8983/fedora/rest/dev/my_image/files/5a5af870-594b-4966-93f6-0348402583f0> a <http://www.w3.org/ns/ldp#RDFSource>,
      <http://www.w3.org/ns/ldp#Container>;

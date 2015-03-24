@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ActiveFedora::Aggregation::Aggregator do
+describe ActiveFedora::Aggregation::ProxyContainer do
   let(:target1) { ActiveFedora::Base.create }
   let(:target2) { ActiveFedora::Base.create }
   let(:aggregator) { described_class.create }

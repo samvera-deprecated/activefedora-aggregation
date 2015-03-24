@@ -1,5 +1,5 @@
 module ActiveFedora::Aggregation
-  class Aggregator < ActiveFedora::Base
+  class ProxyContainer < ActiveFedora::Base
     has_many :proxies, predicate: ::RDF::Vocab::ORE.proxyIn, class_name: 'ActiveFedora::Aggregation::Proxy'
     belongs_to :head, predicate: ::RDF::Vocab::IANA['first'], class_name: 'ActiveFedora::Aggregation::Proxy'
     belongs_to :tail, predicate: ::RDF::Vocab::IANA.last, class_name: 'ActiveFedora::Aggregation::Proxy'

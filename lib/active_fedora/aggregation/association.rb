@@ -41,7 +41,7 @@ module ActiveFedora::Aggregation
     end
 
     def aggregation
-      @aggregation ||= Aggregator.find_or_initialize(klass.uri_to_id(uri))
+      @aggregation ||= ProxyContainer.find_or_initialize(klass.uri_to_id(uri))
     end
 
     def first
