@@ -1,8 +1,23 @@
 module ActiveFedora::Aggregation
   class ProxyContainer < ActiveFedora::Base
-    has_many :proxies, predicate: ::RDF::Vocab::ORE.proxyIn, class_name: 'ActiveFedora::Aggregation::Proxy'
-    belongs_to :head, predicate: ::RDF::Vocab::IANA['first'], class_name: 'ActiveFedora::Aggregation::Proxy'
-    belongs_to :tail, predicate: ::RDF::Vocab::IANA.last, class_name: 'ActiveFedora::Aggregation::Proxy'
+    type ::RDF::Vocab::LDP.IndirectContainer
+
+    attr_writer :parent
+
+    property :membership_resource, predicate: ::RDF::Vocab::LDP.membershipResource
+    property :member_relation, predicate: ::RDF::Vocab::LDP.hasMemberRelation
+    property :inserted_content_relation, predicate: ::RDF::Vocab::LDP.insertedContentRelation
+
+    after_initialize :default_relations
+
+    def parent
+      @parent || raise("Parent hasn't been set on #{self.class}")
+    end
+
+    def default_relations
+      self.member_relation = [::RDF::URI.new("http://pcdm.org/hasMember")] # TODO wrong predicate!
+      self.inserted_content_relation = [::RDF::Vocab::ORE.proxyFor]
+    end
 
     def first
       head.target
@@ -28,9 +43,9 @@ module ActiveFedora::Aggregation
         proxy.prev_id = new_proxies[idx-1].id unless idx == 0
       end
 
-      self.head = new_proxies.first
-      self.tail = new_proxies.last
-      self.proxies = new_proxies
+      parent.head = new_proxies.first
+      parent.tail = new_proxies.last
+      parent.proxies = new_proxies
     end
 
     # TODO clear out the old proxies (or reuse them)
@@ -56,16 +71,16 @@ module ActiveFedora::Aggregation
     # @param obj [ActiveFedora::Base]
     def << (obj)
       node = if persisted?
-               proxies.create(id: mint_proxy_id, target: obj, prev: tail)
+               parent.proxies.create(id: mint_proxy_id, target: obj, prev: parent.tail)
              else
-               proxies.build(id: mint_proxy_id, target: obj, prev: tail)
+               parent.proxies.build(id: mint_proxy_id, target: obj, prev: parent.tail)
              end
       # set the old tail, if present, to have this new proxy as its next
-      self.tail.update(next: node) if tail
+      parent.tail.update(next: node) if parent.tail
       # update the tail to point at the new node
-      self.tail = node
+      parent.tail = node
       # if this is the first node, set it to be the head
-      self.head = node unless head
+      parent.head = node unless parent.head
       reset_target!
     end
 
@@ -86,8 +101,8 @@ module ActiveFedora::Aggregation
 
     # return the proxies in order
     def list_of_proxies
-      @proxy_list ||= if head
-        head.as_list
+      @proxy_list ||= if parent.head
+        parent.head.as_list
       else
         []
       end

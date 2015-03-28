@@ -4,6 +4,18 @@ describe ActiveFedora::Aggregation::ProxyContainer do
   let(:target1) { ActiveFedora::Base.create }
   let(:target2) { ActiveFedora::Base.create }
   let(:aggregator) { described_class.create }
+  let(:parent) { Image.create }
+
+  before do
+    class Image < ActiveFedora::Base
+      aggregates :generic_files
+    end
+    aggregator.parent = parent
+  end
+
+  after do
+    Object.send(:remove_const, :Image)
+  end
 
   describe "#target=" do
     before do
@@ -20,8 +32,8 @@ describe ActiveFedora::Aggregation::ProxyContainer do
       end
 
       it "should set head and tail" do
-        expect(aggregator.head.target).to eq target1
-        expect(aggregator.head).to eq aggregator.tail
+        expect(aggregator.parent.head.target).to eq target1
+        expect(aggregator.parent.head).to eq aggregator.parent.tail
       end
     end
 
@@ -32,12 +44,12 @@ describe ActiveFedora::Aggregation::ProxyContainer do
       end
 
       it "should set head and tail" do
-        expect(aggregator.head.target).to eq target1
-        expect(aggregator.tail.target).to eq target2
+        expect(aggregator.parent.head.target).to eq target1
+        expect(aggregator.parent.tail.target).to eq target2
       end
 
       it "should establish next on the proxy" do
-        expect(aggregator.head.next).to eq aggregator.tail
+        expect(aggregator.parent.head.next).to eq aggregator.parent.tail
       end
     end
   end

@@ -41,7 +41,11 @@ module ActiveFedora::Aggregation
     end
 
     def aggregation
-      @aggregation ||= ProxyContainer.find_or_initialize(klass.uri_to_id(uri))
+      @aggregation ||= begin
+         ProxyContainer.find_or_initialize(klass.uri_to_id(uri)).tap do |container|
+           container.parent = @parent
+         end
+      end
     end
 
     def first

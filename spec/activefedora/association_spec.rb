@@ -10,6 +10,11 @@ describe ActiveFedora::Aggregation::Association do
       aggregates :generic_files
     end
   end
+
+  after do
+    Object.send(:remove_const, :Image)
+  end
+
   let(:generic_file1) { GenericFile.create }
   let(:generic_file2) { GenericFile.create }
 
@@ -23,6 +28,7 @@ describe ActiveFedora::Aggregation::Association do
   let(:reloaded) { Image.find(image.id) } # because reload doesn't clear this association
 
   it "should save the images in order" do
+    puts "Image #{image.uri}"
     expect(reloaded.generic_files).to eq [generic_file2, generic_file1]
   end
 end
