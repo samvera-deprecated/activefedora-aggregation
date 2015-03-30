@@ -14,34 +14,34 @@ module ActiveFedora::Aggregation
     end
 
     def == other
-      aggregation.to_a == other
+      container.to_a == other
     end
 
     def create(&block)
       klass.create(&block).tap do |created|
-        aggregation << created
+        container << created
       end
       save #causes the (head/tail) pointers on the aggregation to be persisted
     end
 
     def save
-      aggregation.save
+      container.save
     end
 
     def target=(vals)
-      aggregation.target=(vals)
+      container.target=(vals)
     end
 
     def target_ids=(vals)
-      aggregation.target_ids=(vals)
+      container.target_ids=(vals)
     end
 
     def target_ids
-      aggregation.target_ids
+      container.target_ids
     end
 
-    def aggregation
-      @aggregation ||= begin
+    def container
+      @container ||= begin
          ProxyContainer.find_or_initialize(klass.uri_to_id(uri)).tap do |container|
            container.parent = @parent
          end
@@ -49,7 +49,7 @@ module ActiveFedora::Aggregation
     end
 
     def first
-      aggregation.first
+      container.first
     end
 
     def uri
