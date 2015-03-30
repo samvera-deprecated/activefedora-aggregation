@@ -27,8 +27,23 @@ describe ActiveFedora::Aggregation::Association do
 
   let(:reloaded) { Image.find(image.id) } # because reload doesn't clear this association
 
-  it "should save the images in order" do
-    puts "Image #{image.uri}"
-    expect(reloaded.generic_files).to eq [generic_file2, generic_file1]
+  describe "the association" do
+    subject { reloaded.generic_files }
+    it { is_expected.to eq [generic_file2, generic_file1] }
+
+    it "has a first element" do
+      expect(subject.first).to eq generic_file2
+    end
+  end
+
+  describe "#head" do
+    it "returns the first proxy" do
+      expect(reloaded.head).to be_kind_of ActiveFedora::Aggregation::Proxy
+    end
+  end
+  describe "#head_id" do
+    it "returns the first proxy" do
+      expect(reloaded.head_id).to be_kind_of String
+    end
   end
 end

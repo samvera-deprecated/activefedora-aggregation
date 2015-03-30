@@ -20,7 +20,7 @@ module ActiveFedora::Aggregation
     end
 
     def first
-      head.target
+      parent.head.target
     end
 
     # This can be a very expensive operation. avoid if possible
