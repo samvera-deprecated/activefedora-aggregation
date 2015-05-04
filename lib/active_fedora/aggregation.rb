@@ -1,7 +1,7 @@
 require 'active_fedora/aggregation/version'
 require 'active_support'
 require 'active-fedora'
-require 'rdf-vocab'
+require 'rdf/vocab'
 
 module ActiveFedora
   module Aggregation

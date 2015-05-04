@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activesupport'
   spec.add_dependency 'active-fedora'
-  spec.add_dependency 'rdf-vocab'
+  spec.add_dependency 'rdf-vocab', '~> 0.8.1'
 
   spec.add_development_dependency "bundler", "~> 1.8"
   spec.add_development_dependency "rake", "~> 10.0"
