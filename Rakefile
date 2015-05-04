@@ -6,7 +6,7 @@ require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec)
 
 require 'jettywrapper'
-Jettywrapper.hydra_jetty_version = "v8.3.0"
+Jettywrapper.hydra_jetty_version = "v8.3.1"
 
 desc 'Spin up hydra-jetty and run specs'
 task ci: ['jetty:clean'] do
