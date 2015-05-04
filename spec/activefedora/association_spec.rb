@@ -10,12 +10,10 @@ describe ActiveFedora::Aggregation::Association do
   after do
     Object.send(:remove_const, :GenericFile)
   end
-
   let(:generic_file1) { GenericFile.create }
   let(:generic_file2) { GenericFile.create }
 
-
-  context "without a class name" do
+  context "with a defined class" do
     before do
       class Image < ActiveFedora::Base
         aggregates :generic_files
@@ -86,6 +84,32 @@ describe ActiveFedora::Aggregation::Association do
     end
   end
 
+  context "without a defined class or class name" do
+    before do
+      class Image < ActiveFedora::Base
+        aggregates :files
+      end
+    end
+
+    after do
+      Object.send(:remove_const, :Image)
+    end
+
+    let(:image) { Image.create }
+
+    before do
+      image.files = [generic_file2, generic_file1]
+      image.save
+    end
+
+    let(:reloaded) { Image.find(image.id) } # because reload doesn't clear this association
+
+    describe "the association" do
+      subject { reloaded.files }
+      it { is_expected.to eq [generic_file2, generic_file1] }
+    end
+  end
+
   context "with a predicate" do
     let(:predicate) { ::RDF::URI.new('http://fedora.info/ns/pcdm#hasMembers') }
 
@@ -120,6 +144,8 @@ describe ActiveFedora::Aggregation::Association do
         query_result = reloaded.resource.query(predicate: predicate)
         expect(query_result.count).to eq 2
       end
+      subject { reloaded.generic_files }
+      it { is_expected.to eq [generic_file2, generic_file1] }
     end
   end
 end
