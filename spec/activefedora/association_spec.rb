@@ -84,10 +84,10 @@ describe ActiveFedora::Aggregation::Association do
     end
   end
 
-  context "without a defined class or class name" do
+  context "without a defined class or class name (non-activefedora class)" do
     before do
       class Image < ActiveFedora::Base
-        aggregates :files
+        aggregates :files # This resolves to `class_name: ::File'
       end
     end
 
@@ -106,6 +106,32 @@ describe ActiveFedora::Aggregation::Association do
 
     describe "the association" do
       subject { reloaded.files }
+      it { is_expected.to eq [generic_file2, generic_file1] }
+    end
+  end
+
+  context "without a defined class or class name (non-existing class)" do
+    before do
+      class Image < ActiveFedora::Base
+        aggregates :foos # no real class
+      end
+    end
+
+    after do
+      Object.send(:remove_const, :Image)
+    end
+
+    let(:image) { Image.create }
+
+    before do
+      image.foos = [generic_file2, generic_file1]
+      image.save
+    end
+
+    let(:reloaded) { Image.find(image.id) } # because reload doesn't clear this association
+
+    describe "the association" do
+      subject { reloaded.foos }
       it { is_expected.to eq [generic_file2, generic_file1] }
     end
   end

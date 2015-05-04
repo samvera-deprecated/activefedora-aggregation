@@ -5,12 +5,14 @@ module ActiveFedora::Aggregation
     end
 
     def klass
-      klass = super
-      # This check precludes an inferred class like ::File from being used.
-      if klass.respond_to? :uri_to_id
-        klass
-      else
-        ActiveFedora::Base
+      @klass ||= begin
+        klass = if Object.const_defined? class_name
+          class_name.constantize
+        else
+          ActiveFedora::Base
+        end
+
+        klass.respond_to?(:uri_to_id) ? klass : ActiveFedora::Base
       end
     end
 
