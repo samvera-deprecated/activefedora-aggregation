@@ -2,8 +2,6 @@ module ActiveFedora::Aggregation
   class ProxyContainer < ActiveFedora::Base
     type ::RDF::Vocab::LDP.IndirectContainer
 
-    attr_writer :parent
-
     property :membership_resource, predicate: ::RDF::Vocab::LDP.membershipResource
     property :member_relation, predicate: ::RDF::Vocab::LDP.hasMemberRelation
     property :inserted_content_relation, predicate: ::RDF::Vocab::LDP.insertedContentRelation
@@ -12,6 +10,11 @@ module ActiveFedora::Aggregation
 
     def parent
       @parent || raise("Parent hasn't been set on #{self.class}")
+    end
+
+    def parent=(parent)
+      @parent = parent
+      self.membership_resource = [::RDF::URI(parent.uri)]
     end
 
     def default_relations

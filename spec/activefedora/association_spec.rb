@@ -44,6 +44,9 @@ describe ActiveFedora::Aggregation::Association do
       it "uses the default predicate" do
         expect(reloaded.resource.query(predicate: ::RDF::Vocab::ORE.aggregates).count).to eq 2
       end
+      it "associates directly to aggregated resource" do
+        expect(reloaded.resource.query(predicate: ::RDF::Vocab::ORE.aggregates).to_a.first.object).to eq generic_file2.resource.rdf_subject
+      end
     end
 
     describe "#head" do
