@@ -7,14 +7,20 @@ describe ActiveFedora::Aggregation::ProxyContainer do
   let(:parent) { Image.create }
 
   before do
+    class GenericFile < ActiveFedora::Base
+      contains :original
+    end
+
     class Image < ActiveFedora::Base
       aggregates :generic_files
     end
+
     aggregator.parent = parent
   end
 
   after do
     Object.send(:remove_const, :Image)
+    Object.send(:remove_const, :GenericFile)
   end
 
   describe "#target=" do
