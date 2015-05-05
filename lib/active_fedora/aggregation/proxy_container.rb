@@ -14,7 +14,7 @@ module ActiveFedora::Aggregation
     end
 
     def default_relations
-      self.member_relation = [::RDF::URI.new("http://pcdm.org/hasMember")] # TODO wrong predicate!
+      self.member_relation = [::RDF::Vocab::ORE.aggregates] # TODO wrong predicate!
       self.inserted_content_relation = [::RDF::Vocab::ORE.proxyFor]
     end
 
