@@ -47,13 +47,6 @@ describe ActiveFedora::Aggregation::Association do
         expect(image.generic_files).to eq [generic_file2, generic_file1, generic_file3]
       end
 
-      it "should return an updated array of generic_files when generic_files is empty" do
-        current_generic_files = image2.generic_files.container.to_a
-        new_generic_files = current_generic_files + [generic_file3]
-        image2.generic_files = new_generic_files
-        expect(image2.generic_files).to eq [generic_file3]
-      end
-
       it "has a first element" do
         expect(subject.first).to eq generic_file2
       end
