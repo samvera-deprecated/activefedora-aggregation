@@ -12,6 +12,7 @@ describe ActiveFedora::Aggregation::Association do
   end
   let(:generic_file1) { GenericFile.create }
   let(:generic_file2) { GenericFile.create }
+  let(:generic_file3) { GenericFile.create }
 
   context "with a defined class" do
     before do
@@ -36,6 +37,13 @@ describe ActiveFedora::Aggregation::Association do
     describe "the association" do
       subject { reloaded.generic_files }
       it { is_expected.to eq [generic_file2, generic_file1] }
+
+      it "should return an updated array of generic_files" do
+        current_generic_files = image.generic_files.container.to_a
+        new_generic_files = current_generic_files + [generic_file3]
+        image.generic_files = new_generic_files
+        expect(image.generic_files).to eq [generic_file2, generic_file1, generic_file3]
+      end
 
       it "has a first element" do
         expect(subject.first).to eq generic_file2

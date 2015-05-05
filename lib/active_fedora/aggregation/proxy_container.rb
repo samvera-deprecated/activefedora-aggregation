@@ -4,6 +4,10 @@ module ActiveFedora::Aggregation
 
     after_initialize :default_relations
 
+    def self.contained_class
+      "Proxy"
+    end
+
     def parent
       @parent || raise("Parent hasn't been set on #{self.class}")
     end
@@ -42,6 +46,7 @@ module ActiveFedora::Aggregation
         proxy.prev_id = new_proxies[idx-1].id unless idx == 0
       end
 
+      parent.reload
       parent.head = new_proxies.first
       parent.tail = new_proxies.last
       new_proxies.each(&:save)
@@ -52,6 +57,7 @@ module ActiveFedora::Aggregation
     # TODO clear out the old proxies (or reuse them)
     def build_proxies(objects)
       # need to create the proxies before we can add the links otherwise the linked to resource won't exist
+      contained.each(&:destroy)
       objects.map do |object|
         Proxy.create(id: mint_proxy_id, target: object)
       end
