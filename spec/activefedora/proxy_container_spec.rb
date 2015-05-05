@@ -3,7 +3,11 @@ require 'spec_helper'
 describe ActiveFedora::Aggregation::ProxyContainer do
   let(:target1) { ActiveFedora::Base.create }
   let(:target2) { ActiveFedora::Base.create }
-  let(:aggregator) { described_class.create }
+  let(:aggregator) do
+    described_class.create do |i|
+      i.parent = parent
+    end
+  end
   let(:parent) { Image.create }
 
   before do
