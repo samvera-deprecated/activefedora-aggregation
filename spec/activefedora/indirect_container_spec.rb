@@ -58,7 +58,11 @@ RSpec.describe ActiveFedora::Aggregation::IndirectContainer do
   describe "#contained" do
     context "when there are contained nodes" do
       it "should return them" do
-        subject.save
+        parent = ActiveFedora::Base.create
+        subject.membership_resource = [parent.resource.rdf_subject]
+        subject.member_relation = [::RDF::Vocab::ORE.proxyFor]
+        subject.inserted_content_relation = [::RDF::Vocab::ORE.aggregates]
+        subject.save!
         child = ActiveFedora::Base.new("#{subject.id}/#{SecureRandom.uuid}")
         child.save
         reloaded = described_class.find(subject.id)
