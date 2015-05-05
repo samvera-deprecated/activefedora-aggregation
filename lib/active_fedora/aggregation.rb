@@ -14,6 +14,7 @@ module ActiveFedora
       autoload :ThroughAssociation
       autoload :Reflection
       autoload :BaseExtension
+      autoload :IndirectContainer
     end
 
     ActiveFedora::Base.extend BaseExtension

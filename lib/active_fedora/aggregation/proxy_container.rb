@@ -1,10 +1,6 @@
 module ActiveFedora::Aggregation
-  class ProxyContainer < ActiveFedora::Base
+  class ProxyContainer < IndirectContainer
     type ::RDF::Vocab::LDP.IndirectContainer
-
-    property :membership_resource, predicate: ::RDF::Vocab::LDP.membershipResource
-    property :member_relation, predicate: ::RDF::Vocab::LDP.hasMemberRelation
-    property :inserted_content_relation, predicate: ::RDF::Vocab::LDP.insertedContentRelation
 
     after_initialize :default_relations
 
@@ -18,7 +14,7 @@ module ActiveFedora::Aggregation
     end
 
     def default_relations
-      self.member_relation = [::RDF::URI.new("http://pcdm.org/hasMember")] # TODO wrong predicate!
+      self.member_relation = [::RDF::Vocab::ORE.aggregates]
       self.inserted_content_relation = [::RDF::Vocab::ORE.proxyFor]
     end
 
@@ -78,7 +74,7 @@ module ActiveFedora::Aggregation
       node = if persisted?
                Proxy.create(id: mint_proxy_id, target: obj, prev: parent.tail)
              else
-               Proxy.build(id: mint_proxy_id, target: obj, prev: parent.tail)
+               Proxy.new(id: mint_proxy_id, target: obj, prev: parent.tail)
              end
       # set the old tail, if present, to have this new proxy as its next
       parent.tail.update(next: node) if parent.tail
