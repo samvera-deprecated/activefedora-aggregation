@@ -51,7 +51,6 @@ describe ActiveFedora::Aggregation::Association do
         current_generic_files = image2.generic_files.container.to_a
         new_generic_files = current_generic_files + [generic_file3]
         image.generic_files = new_generic_files
-        binding.pry
         expect(image2.generic_files).to eq [generic_file3]
       end
 
