@@ -2,8 +2,6 @@ module ActiveFedora::Aggregation
   class ProxyContainer < ActiveFedora::Base
     type ::RDF::Vocab::LDP.IndirectContainer
 
-    attr_writer :parent
-
     property :membership_resource, predicate: ::RDF::Vocab::LDP.membershipResource
     property :member_relation, predicate: ::RDF::Vocab::LDP.hasMemberRelation
     property :inserted_content_relation, predicate: ::RDF::Vocab::LDP.insertedContentRelation
@@ -12,6 +10,11 @@ module ActiveFedora::Aggregation
 
     def parent
       @parent || raise("Parent hasn't been set on #{self.class}")
+    end
+
+    def parent=(parent)
+      @parent = parent
+      self.membership_resource = [::RDF::URI(parent.uri)]
     end
 
     def default_relations
@@ -45,7 +48,9 @@ module ActiveFedora::Aggregation
 
       parent.head = new_proxies.first
       parent.tail = new_proxies.last
-      parent.proxies = new_proxies
+      new_proxies.each(&:save)
+      parent.save
+      new_proxies
     end
 
     # TODO clear out the old proxies (or reuse them)
@@ -71,9 +76,9 @@ module ActiveFedora::Aggregation
     # @param obj [ActiveFedora::Base]
     def << (obj)
       node = if persisted?
-               parent.proxies.create(id: mint_proxy_id, target: obj, prev: parent.tail)
+               Proxy.create(id: mint_proxy_id, target: obj, prev: parent.tail)
              else
-               parent.proxies.build(id: mint_proxy_id, target: obj, prev: parent.tail)
+               Proxy.build(id: mint_proxy_id, target: obj, prev: parent.tail)
              end
       # set the old tail, if present, to have this new proxy as its next
       parent.tail.update(next: node) if parent.tail

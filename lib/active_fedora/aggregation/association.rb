@@ -44,6 +44,7 @@ module ActiveFedora::Aggregation
       @container ||= begin
          ProxyContainer.find_or_initialize(klass.uri_to_id(uri)).tap do |container|
            container.parent = @parent
+           container.member_relation = [@reflection.predicate]
          end
       end
     end
@@ -53,7 +54,7 @@ module ActiveFedora::Aggregation
     end
 
     def uri
-      @parent.uri + '/files'
+      @parent.uri + "/#{@reflection.name}"
     end
   end
 end

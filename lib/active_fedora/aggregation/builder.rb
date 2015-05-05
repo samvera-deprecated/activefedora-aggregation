@@ -5,8 +5,6 @@ module ActiveFedora::Aggregation
     def build
       reflection = super
       configure_dependency
-      predicate = options.fetch(:predicate, ::RDF::Vocab::ORE.aggregates)
-      model.has_and_belongs_to_many :proxies, predicate: predicate, class_name: 'ActiveFedora::Aggregation::Proxy', inverse_of: :containers
       model.belongs_to :head, predicate: ::RDF::Vocab::IANA['first'], class_name: 'ActiveFedora::Aggregation::Proxy'
       model.belongs_to :tail, predicate: ::RDF::Vocab::IANA.last, class_name: 'ActiveFedora::Aggregation::Proxy'
 

@@ -16,6 +16,10 @@ module ActiveFedora::Aggregation
       end
     end
 
+    def predicate
+      @options[:predicate] || ::RDF::Vocab::ORE.aggregates
+    end
+
     def collection?
       true
     end
