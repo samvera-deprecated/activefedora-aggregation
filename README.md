@@ -1,4 +1,4 @@
-[![Gem Version](https://badge.fury.io/rb/activefedora-aggregation.svg)](http://badge.fury.io/rb/activefedora-aggregation) [![Build Status](https://travis-ci.org/curationexperts/activefedora-aggregation.svg?branch=v0.1.0)](https://travis-ci.org/curationexperts/activefedora-aggregation)
+[![Gem Version](https://badge.fury.io/rb/activefedora-aggregation.svg)](http://badge.fury.io/rb/activefedora-aggregation) [![Build Status](https://travis-ci.org/projecthydra-labs/activefedora-aggregation.svg)](https://travis-ci.org/projecthydra-labs/activefedora-aggregation)
 # ActiveFedora::Aggregation
 
 Aggregations for ActiveFedora.
@@ -21,4 +21,4 @@ image.save
 
 ```
 
-Now the "generic\_files" method returns an ordered list of GenericFile objects.
+Now the `generic\_files` method returns an ordered list of GenericFile objects.
