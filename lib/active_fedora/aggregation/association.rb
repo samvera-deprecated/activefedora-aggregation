@@ -1,60 +1,37 @@
 module ActiveFedora::Aggregation
-  class Association
+  class Association < ::ActiveFedora::Associations::IndirectlyContainsAssociation
 
-    # @param [ActiveFedora::Base] parent
-    # @param [Reflection] reflection
-    # @opts options [String] class_name name of the class in the association
-    def initialize(parent, reflection)
-      @parent = parent
-      @reflection = reflection
+    def ordered_reader
+      OrderedReader.new(owner).to_a
     end
 
-    def klass
-      @reflection.klass
+    def add_link(proxy)
+      LinkInserter.new(owner, proxy).call
     end
 
-    def == other
-      container.to_a == other
-    end
-
-    def create(&block)
-      klass.create(&block).tap do |created|
-        container << created
-      end
-      save #causes the (head/tail) pointers on the aggregation to be persisted
-    end
-
-    def save
-      container.save
-    end
-
-    def target=(vals)
-      container.target=(vals)
-    end
-
-    def target_ids=(vals)
-      container.target_ids=(vals)
-    end
-
-    def target_ids
-      container.target_ids
-    end
-
-    def container
-      @container ||= begin
-         ProxyContainer.find_or_initialize(klass.uri_to_id(uri)).tap do |container|
-           container.parent = @parent
-           container.member_relation = [@reflection.predicate]
-         end
+    def save_through_record(record)
+      super.tap do |proxy|
+        add_link(proxy)
       end
     end
 
-    def first
-      container.first
+    def options
+      @all_options ||= default_options.merge(super)
     end
 
-    def uri
-      @parent.uri + "/#{@reflection.name}"
+    private
+
+    def default_options
+      { through: default_proxy_class, foreign_key: :target, has_member_relation: reflection.predicate, inserted_content_relation: content_relation }
     end
+
+    def content_relation
+      default_proxy_class.constantize.reflect_on_association(:target).predicate
+    end
+
+    def default_proxy_class
+      'ActiveFedora::Aggregation::Proxy'
+    end
+
   end
 end

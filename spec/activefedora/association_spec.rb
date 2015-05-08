@@ -39,7 +39,7 @@ describe ActiveFedora::Aggregation::Association do
       it { is_expected.to eq [generic_file2, generic_file1] }
 
       it "should return an updated array of generic_files" do
-        current_generic_files = image.generic_files.container.to_a
+        current_generic_files = image.generic_files.to_a
         new_generic_files = current_generic_files + [generic_file3]
         image.generic_files = new_generic_files
         expect(image.generic_files).to eq [generic_file2, generic_file1, generic_file3]
@@ -54,6 +54,12 @@ describe ActiveFedora::Aggregation::Association do
       end
       it "associates directly to aggregated resource" do
         expect(reloaded.resource.query(predicate: ::RDF::Vocab::ORE.aggregates).to_a.first.object).to eq generic_file2.resource.rdf_subject
+      end
+    end
+
+    describe "#ordered_*" do
+      it "should return an ordered array" do
+        expect(reloaded.ordered_generic_files).to eq [generic_file2, generic_file1]
       end
     end
 

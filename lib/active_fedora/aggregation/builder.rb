@@ -4,7 +4,6 @@ module ActiveFedora::Aggregation
 
     def build
       reflection = super
-      configure_dependency
       model.belongs_to :head, predicate: ::RDF::Vocab::IANA['first'], class_name: 'ActiveFedora::Aggregation::Proxy'
       model.belongs_to :tail, predicate: ::RDF::Vocab::IANA.last, class_name: 'ActiveFedora::Aggregation::Proxy'
 
@@ -16,6 +15,9 @@ module ActiveFedora::Aggregation
       mixin.redefine_method("#{name.to_s.singularize}_ids") do
         association(name).ids_reader
       end
+      mixin.redefine_method("ordered_#{name.to_s.pluralize}") do
+        association(name).ordered_reader
+      end
     end
 
     def self.define_writers(mixin, name)
@@ -24,24 +26,6 @@ module ActiveFedora::Aggregation
         association(name).ids_writer(ids)
       end
     end
-
-    private
-
-      def configure_dependency
-        define_save_dependency_method
-        model.after_save dependency_method_name
-      end
-
-      def define_save_dependency_method
-        name = self.name
-        model.send(:define_method, dependency_method_name) do
-          send(name).save
-        end
-      end
-
-      def dependency_method_name
-        "aggregator_dependent_for_#{name}"
-      end
 
   end
 end
