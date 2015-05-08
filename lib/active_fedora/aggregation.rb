@@ -7,14 +7,13 @@ module ActiveFedora
   module Aggregation
     extend ActiveSupport::Autoload
     eager_autoload do
-      autoload :ProxyContainer
       autoload :Association
       autoload :Proxy
       autoload :Builder
-      autoload :ThroughAssociation
       autoload :Reflection
       autoload :BaseExtension
-      autoload :IndirectContainer
+      autoload :OrderedReader
+      autoload :LinkInserter
     end
 
     ActiveFedora::Base.extend BaseExtension
