@@ -37,6 +37,29 @@ describe ActiveFedora::Aggregation::Association do
       it "has persisted the association" do
         expect(image.reload.generic_files).to eq [generic_file1, generic_file2]
       end
+      it "should be able to delete" do
+        image.generic_files = [generic_file1]
+        expect(reloaded.generic_files).to eq [generic_file1]
+        expect(reloaded.ordered_generic_files).to eq [generic_file1]
+      end
+      it "should be able to be emptied" do
+        image.generic_files = []
+        image.save!
+        expect(reloaded.generic_files).to eq []
+        expect(reloaded.ordered_generic_files).to eq []
+      end
+      it "should be able to delete a node in the middle" do
+        image.generic_files << generic_file3
+        image.save
+        image.generic_files = [ generic_file2, generic_file3 ]
+        expect(image.ordered_generic_files).to eq [generic_file2, generic_file3]
+        expect(reloaded.generic_files).to eq [generic_file2, generic_file3]
+        expect(reloaded.ordered_generic_files).to eq [generic_file2, generic_file3]
+      end
+
+      it "has a first element" do
+        expect(reloaded.generic_files.first).to eq generic_file1
+      end
     end
 
     context "a persisted record" do

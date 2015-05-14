@@ -15,6 +15,14 @@ module ActiveFedora
       autoload :LinkInserter
       autoload :OrderedReader
       autoload :PersistLinks
+      autoload :OrderedProxy
+      autoload :AppendsToAggregation
+      autoload :ProxyOwner
+      autoload :NullProxy
+      autoload :DecoratingRepository
+      autoload :DecoratorWithArguments
+      autoload :DecoratorList
+      autoload :ProxyRepository
     end
 
     ActiveFedora::Base.include BaseExtension
