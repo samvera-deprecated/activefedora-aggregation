@@ -25,52 +25,65 @@ describe ActiveFedora::Aggregation::Association do
       Object.send(:remove_const, :Image)
     end
 
-    let(:image) { Image.create }
-
-    before do
-      image.generic_files = [generic_file2, generic_file1]
-      image.save
-    end
-
     let(:reloaded) { Image.find(image.id) } # because reload doesn't clear this association
 
-    describe "the association" do
-      subject { reloaded.generic_files }
-      it { is_expected.to eq [generic_file2, generic_file1] }
-
-      it "should return an updated array of generic_files" do
-        current_generic_files = image.generic_files.to_a
-        new_generic_files = current_generic_files + [generic_file3]
-        image.generic_files = new_generic_files
-        expect(image.generic_files).to eq [generic_file2, generic_file1, generic_file3]
+    context "a new record, once saved" do
+      let(:image) { Image.new }
+      before do
+        image.generic_files = [generic_file1, generic_file2]
+        image.save
       end
 
-      it "has a first element" do
-        expect(subject.first).to eq generic_file2
-      end
-
-      it "uses the default predicate" do
-        expect(reloaded.resource.query(predicate: ::RDF::Vocab::ORE.aggregates).count).to eq 2
-      end
-      it "associates directly to aggregated resource" do
-        expect(reloaded.resource.query(predicate: ::RDF::Vocab::ORE.aggregates).to_a.first.object).to eq generic_file2.resource.rdf_subject
+      it "has persisted the association" do
+        expect(image.reload.generic_files).to eq [generic_file1, generic_file2]
       end
     end
 
-    describe "#ordered_*" do
-      it "should return an ordered array" do
-        expect(reloaded.ordered_generic_files).to eq [generic_file2, generic_file1]
+    context "a persisted record" do
+      let(:image) { Image.create }
+      before do
+        image.generic_files = [generic_file2, generic_file1]
+        image.save
       end
-    end
 
-    describe "#head" do
-      it "returns the first proxy" do
-        expect(reloaded.head).to be_kind_of ActiveFedora::Aggregation::Proxy
+      describe "the association" do
+        subject { reloaded.generic_files }
+        it { is_expected.to eq [generic_file2, generic_file1] }
+
+        it "returns an updated array of generic_files" do
+          current_generic_files = image.generic_files.to_a
+          new_generic_files = current_generic_files + [generic_file3]
+          image.generic_files = new_generic_files
+          expect(image.generic_files).to eq [generic_file2, generic_file1, generic_file3]
+        end
+
+        it "has a first element" do
+          expect(subject.first).to eq generic_file2
+        end
+
+        it "uses the default predicate" do
+          expect(reloaded.resource.query(predicate: ::RDF::Vocab::ORE.aggregates).count).to eq 2
+        end
+        it "associates directly to aggregated resource" do
+          expect(reloaded.resource.query(predicate: ::RDF::Vocab::ORE.aggregates).to_a.first.object).to eq generic_file2.resource.rdf_subject
+        end
       end
-    end
-    describe "#head_id" do
-      it "returns the first proxy" do
-        expect(reloaded.head_id).to be_kind_of String
+
+      describe "#ordered_*" do
+        it "should return an ordered array" do
+          expect(reloaded.ordered_generic_files).to eq [generic_file2, generic_file1]
+        end
+      end
+
+      describe "#head" do
+        it "returns the first proxy" do
+          expect(reloaded.head).to be_kind_of ActiveFedora::Aggregation::Proxy
+        end
+      end
+      describe "#head_id" do
+        it "returns the first proxy" do
+          expect(reloaded.head_id).to be_kind_of String
+        end
       end
     end
   end

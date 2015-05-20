@@ -1,5 +1,6 @@
 module ActiveFedora::Aggregation
   class Builder < ActiveFedora::Associations::Builder::CollectionAssociation
+    include ActiveFedora::AutosaveAssociation::AssociationBuilderExtension
     self.macro = :aggregation
 
     def build
@@ -7,6 +8,7 @@ module ActiveFedora::Aggregation
       model.belongs_to :head, predicate: ::RDF::Vocab::IANA['first'], class_name: 'ActiveFedora::Aggregation::Proxy'
       model.belongs_to :tail, predicate: ::RDF::Vocab::IANA.last, class_name: 'ActiveFedora::Aggregation::Proxy'
 
+      model.send(:setup_persist_links_callback, reflection)
       reflection
     end
 

@@ -27,7 +27,7 @@ module ActiveFedora::Aggregation
     end
 
     def persist_nodes!
-      [root, root.tail, proxy, proxy.prev].uniq.compact.each(&:save!)
+      [proxy, proxy.prev].uniq.compact.each(&:save!)
     end
 
     class Appender
