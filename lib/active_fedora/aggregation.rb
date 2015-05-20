@@ -12,10 +12,11 @@ module ActiveFedora
       autoload :Builder
       autoload :Reflection
       autoload :BaseExtension
-      autoload :OrderedReader
       autoload :LinkInserter
+      autoload :OrderedReader
+      autoload :PersistLinks
     end
 
-    ActiveFedora::Base.extend BaseExtension
+    ActiveFedora::Base.include BaseExtension
   end
 end
