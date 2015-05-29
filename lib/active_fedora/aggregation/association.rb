@@ -1,18 +1,13 @@
 module ActiveFedora::Aggregation
   class Association < ::ActiveFedora::Associations::IndirectlyContainsAssociation
+    delegate :first, :to => :ordered_reader
 
     def ordered_reader
       OrderedReader.new(owner).to_a
     end
 
-    def add_link(proxy)
-      LinkInserter.new(owner, proxy).call
-    end
-
-    def save_through_record(record)
-      super.tap do |proxy|
-        add_link(proxy)
-      end
+    def proxy_class
+      @proxy_class ||= ProxyRepository.new(owner, super)
     end
 
     def options
