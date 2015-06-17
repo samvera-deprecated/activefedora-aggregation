@@ -62,6 +62,33 @@ describe ActiveFedora::Aggregation::Association do
       end
     end
 
+    describe "aggregated_by" do
+      let(:image) { Image.new }
+      before do
+        image.generic_files = [generic_file1, generic_file2]
+        image.save
+      end
+
+      context "an element aggregated by one record" do
+        subject { generic_file1.reload }
+        it "can find the record that contains it" do
+          expect(subject.aggregated_by).to eq [image]
+        end
+      end
+
+      context "an element aggregated by multiple records" do
+        let(:image2) { Image.create }
+        before do
+          image2.generic_files = [generic_file2]
+          image2.save
+        end
+        subject { generic_file2.reload }
+        it "can find all of the records that contain it" do
+          expect(subject.aggregated_by).to contain_exactly(image2,image)
+        end
+      end
+    end
+
     context "a persisted record" do
       let(:image) { Image.create }
       before do
