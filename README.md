@@ -1,4 +1,4 @@
-[![Gem Version](https://badge.fury.io/rb/activefedora-aggregation.svg)](http://badge.fury.io/rb/activefedora-aggregation) [![Build Status](https://travis-ci.org/projecthydra-labs/activefedora-aggregation.svg)](https://travis-ci.org/projecthydra-labs/activefedora-aggregation)
+[![Gem Version](https://badge.fury.io/rb/activefedora-aggregation.svg)](http://badge.fury.io/rb/activefedora-aggregation) [![Build Status](https://circleci.com/gh/projecthydra-labs/activefedora-aggregation.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/projecthydra-labs/activefedora-aggregation)
 # ActiveFedora::Aggregation
 
 Aggregations for ActiveFedora.
