@@ -1,6 +1,8 @@
 module ActiveFedora::Aggregation
   class LinkInserter
     attr_reader :root, :proxy
+    # @param [ProxyOwner] root the node representing the aggregation
+    # @param [Proxy] proxy the proxy to add to the aggregation
     def initialize(root, proxy)
       @root = root
       @proxy = proxy
@@ -12,6 +14,7 @@ module ActiveFedora::Aggregation
       else
         set
       end
+      proxy.container = root
       persist_nodes!
     end
 

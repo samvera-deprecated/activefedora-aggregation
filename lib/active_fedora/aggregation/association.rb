@@ -1,6 +1,6 @@
 module ActiveFedora::Aggregation
   class Association < ::ActiveFedora::Associations::IndirectlyContainsAssociation
-    delegate :first, :to => :ordered_reader
+    delegate :first, to: :ordered_reader
 
     def ordered_reader
       OrderedReader.new(owner).to_a
