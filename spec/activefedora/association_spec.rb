@@ -87,8 +87,22 @@ describe ActiveFedora::Aggregation::Association do
         it "uses the default predicate" do
           expect(reloaded.resource.query(predicate: ::RDF::Vocab::ORE.aggregates).count).to eq 2
         end
+
         it "associates directly to aggregated resource" do
           expect(reloaded.resource.query(predicate: ::RDF::Vocab::ORE.aggregates).to_a.first.object).to eq generic_file2.resource.rdf_subject
+        end
+      end
+
+      describe "the proxies" do
+        let(:object) { RDF::URI.new(generic_file1.uri) }
+        let(:selector) { { predicate: RDF::Vocab::ORE.proxyFor, object: object } }
+        let(:proxy_class) { ActiveFedora::Aggregation::Proxy }
+        let(:first_proxy) { proxy_class.all.find { |p| p.resource.query(selector).any? } }
+        let(:query_result) { first_proxy.resource.query(predicate: RDF::Vocab::ORE.proxyIn).first }
+        subject { query_result.object.to_s }
+
+        it "has proxyIn" do
+          expect(subject).to eq image.uri
         end
       end
 
