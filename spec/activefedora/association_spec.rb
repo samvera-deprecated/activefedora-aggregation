@@ -204,11 +204,11 @@ describe ActiveFedora::Aggregation::Association do
   end
 
   context "with a predicate" do
-    let(:predicate) { ::RDF::URI.new('http://fedora.info/ns/pcdm#hasMembers') }
+    let(:predicate) { ::RDF::URI.new('http://pcdm.org/models#hasMember') }
 
     before do
       class Image < ActiveFedora::Base
-        aggregates :generic_files, predicate: ::RDF::URI.new('http://fedora.info/ns/pcdm#hasMembers')
+        aggregates :generic_files, predicate: ::RDF::URI.new('http://pcdm.org/models#hasMember')
       end
     end
 
