@@ -3,6 +3,17 @@ module ActiveFedora::Aggregation
     extend ActiveSupport::Concern
     include PersistLinks
 
+    # Queries the RDF graph to find all records that include this object in their aggregations
+    # @return [Array] records that include this object in their aggregations 
+    def aggregated_by
+      # In theory you should be able to find the aggregation predicate (ie ore:aggregates)
+      # but Fedora does not return that predicate due to this bug in FCREPO: https://jira.duraspace.org/browse/FCREPO-1497 
+      # so we have to, instead, look up the proxies asserting RDF::Vocab::ORE.proxyFor and return their containers.
+      proxy_uris = self.resource.query(predicate: RDF::Vocab::ORE.proxyFor, object: rdf_subject).subjects.to_a
+      proxy_objects = proxy_uris.map{|proxy_uri| ActiveFedora::Aggregation::Proxy.find(ActiveFedora::Base.uri_to_id(proxy_uri.to_s))}
+      proxy_objects.map(&:container) 
+    end
+
     module ClassMethods
       ##
       # Create an aggregation association on the class
