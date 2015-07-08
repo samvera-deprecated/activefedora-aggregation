@@ -65,24 +65,27 @@ describe ActiveFedora::Aggregation::Association do
     describe "aggregated_by" do
       let(:image) { Image.new }
       before do
-        image.generic_files = [generic_file1, generic_file2]
-        image.save
+        proxy = instance_double(ActiveFedora::Aggregation::Proxy, container: image, target: generic_file1)
+        # If I ask the proxy for everything where proxyFor is the file, it
+        # WILL return everything it's a proxyFor for. AF guaruntees it.
+        allow(ActiveFedora::Aggregation::Proxy).to receive(:where).with(proxyFor_ssim: generic_file1.id).and_return([proxy])
       end
 
       context "an element aggregated by one record" do
-        subject { generic_file1.reload }
+        subject { generic_file1 }
         it "can find the record that contains it" do
           expect(subject.aggregated_by).to eq [image]
         end
       end
 
       context "an element aggregated by multiple records" do
-        let(:image2) { Image.create }
+        let(:image2) { Image.new }
         before do
-          image2.generic_files = [generic_file2]
-          image2.save
+          proxy = instance_double(ActiveFedora::Aggregation::Proxy, container: image2, target: generic_file2)
+          proxy2 = instance_double(ActiveFedora::Aggregation::Proxy, container: image, target: generic_file2)
+          allow(generic_file1.send(:proxy_class)).to receive(:where).with(proxyFor_ssim: generic_file2.id).and_return([proxy, proxy2])
         end
-        subject { generic_file2.reload }
+        subject { generic_file2 }
         it "can find all of the records that contain it" do
           expect(subject.aggregated_by).to contain_exactly(image2,image)
         end
