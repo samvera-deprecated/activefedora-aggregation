@@ -65,10 +65,7 @@ describe ActiveFedora::Aggregation::Association do
     describe "aggregated_by" do
       let(:image) { Image.new }
       before do
-        proxy = instance_double(ActiveFedora::Aggregation::Proxy, container: image, target: generic_file1)
-        # If I ask the proxy for everything where proxyFor is the file, it
-        # WILL return everything it's a proxyFor for. AF guaruntees it.
-        allow(ActiveFedora::Aggregation::Proxy).to receive(:where).with(proxyFor_ssim: generic_file1.id).and_return([proxy])
+        ActiveFedora::Aggregation::Proxy.create(container: image, target: generic_file1)
       end
 
       context "an element aggregated by one record" do
@@ -81,8 +78,10 @@ describe ActiveFedora::Aggregation::Association do
       context "an element aggregated by multiple records" do
         let(:image2) { Image.new }
         before do
-          proxy = instance_double(ActiveFedora::Aggregation::Proxy, container: image2, target: generic_file2)
-          proxy2 = instance_double(ActiveFedora::Aggregation::Proxy, container: image, target: generic_file2)
+          # If I ask the proxy for everything where proxyFor is the file, it
+          # WILL return everything it's a proxyFor for. AF guaruntees it.
+          proxy = instance_double(ActiveFedora::Aggregation::Proxy, container: image2)
+          proxy2 = instance_double(ActiveFedora::Aggregation::Proxy, container: image)
           allow(generic_file1.send(:proxy_class)).to receive(:where).with(proxyFor_ssim: generic_file2.id).and_return([proxy, proxy2])
         end
         subject { generic_file2 }
