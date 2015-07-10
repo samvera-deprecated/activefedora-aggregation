@@ -37,6 +37,12 @@ describe ActiveFedora::Aggregation::Association do
       it "has persisted the association" do
         expect(image.reload.generic_files).to eq [generic_file1, generic_file2]
       end
+
+      context "when retrieving ids" do
+        subject { image.reload.generic_file_ids }
+        it { is_expected.to eq [generic_file1.id, generic_file2.id] }
+      end
+
       it "should be able to delete" do
         image.generic_files = [generic_file1]
         expect(reloaded.generic_files).to eq [generic_file1]
