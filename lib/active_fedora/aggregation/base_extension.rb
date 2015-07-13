@@ -4,12 +4,14 @@ module ActiveFedora::Aggregation
     include PersistLinks
 
     # Queries the RDF graph to find all records that include this object in their aggregations
-    # @return [Array] records that include this object in their aggregations 
+    # @return [Array] records that include this object in their aggregations
     def aggregated_by
       # In theory you should be able to find the aggregation predicate (ie ore:aggregates)
-      # but Fedora does not return that predicate due to this bug in FCREPO: https://jira.duraspace.org/browse/FCREPO-1497 
-      # so we have to, instead, look up the proxies asserting RDF::Vocab::ORE.proxyFor and return their containers.
-      proxy_class.where(proxyFor_ssim: id).map(&:container) 
+      # but Fedora does not return that predicate due to this bug in FCREPO:
+      #   https://jira.duraspace.org/browse/FCREPO-1497
+      # so we have to look up the proxies asserting RDF::Vocab::ORE.proxyFor
+      # and return their containers.
+      proxy_class.where(proxyFor_ssim: id).map(&:container)
     end
 
     private
@@ -29,9 +31,26 @@ module ActiveFedora::Aggregation
         Builder.build(self, name, options)
       end
 
+      ##
+      # Create a association filter on the class
+      # @example
+      #   class Image < ActiveFedora::Base
+      #     aggregates :generic_files
+      #     filters_association :generic_files, as: :large_files, condition: :is_big?
+      #   end
+      def filters_association(extending_from, options={})
+        name = options.delete(:as)
+        ActiveFedora::Filter::Builder.build(self, name, options.merge(extending_from: extending_from))
+      end
+
       def create_reflection(macro, name, options, active_fedora)
-        if macro == :aggregation
+        case macro
+        when :aggregation
           Reflection.new(macro, name, options, active_fedora).tap do |reflection|
+            add_reflection name, reflection
+          end
+        when :filter
+          ActiveFedora::Filter::Reflection.new(macro, name, options, active_fedora).tap do |reflection|
             add_reflection name, reflection
           end
         else
