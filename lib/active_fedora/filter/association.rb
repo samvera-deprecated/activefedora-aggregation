@@ -10,6 +10,10 @@ module ActiveFedora::Filter
       extending_from.concat(records)
     end
 
+    def delete(records)
+      extending_from.delete(records)
+    end
+
     # @param [Array] records a list of records to append to the current association
     # @raise [ArgumentError] if one of the records doesn't match the prescribed condition
     def concat(records)

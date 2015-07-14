@@ -87,16 +87,28 @@ describe "Filtering" do
     it "returns the objects of the correct type" do
       expect(image.child_objects).to eq [test_object]
     end
+
+    describe "when the parent association is changed" do
+      before do
+        image.child_objects = [test_object]
+        image.members = [test_collection]
+      end
+
+      it "updates the filtered relation" do
+        expect(image.child_objects).to eq []
+      end
+    end
   end
 
-  describe "when the parent association is changed" do
+  describe "#delete" do
+    let(:another_object) { TestObject.new }
     before do
-      image.child_objects = [test_object]
-      image.members = [test_collection]
+      image.members = [test_object, test_collection, another_object]
+      image.child_objects.delete(test_object)
     end
 
-    it "updates the filtered relation" do
-      expect(image.child_objects).to eq []
-    end
+    subject { image.members }
+
+    it { is_expected.to eq [test_collection, another_object] }
   end
 end
