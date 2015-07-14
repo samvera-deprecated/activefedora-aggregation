@@ -32,11 +32,11 @@ module ActiveFedora::Aggregation
       end
 
       ##
-      # Create a association filter on the class
+      # Create an association filter on the class
       # @example
       #   class Image < ActiveFedora::Base
       #     aggregates :generic_files
-      #     filters_association :generic_files, as: :large_files, condition: :is_big?
+      #     filters_association :generic_files, as: :large_files, condition: :big_file?
       #   end
       def filters_association(extending_from, options={})
         name = options.delete(:as)

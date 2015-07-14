@@ -25,7 +25,47 @@ describe ActiveFedora::Aggregation::Association do
       Object.send(:remove_const, :Image)
     end
 
-    let(:reloaded) { Image.find(image.id) } # because reload doesn't clear this association
+    describe "#concat" do
+      let(:image) { Image.new }
+      context "when the association is empty" do
+        before do
+          image.generic_files << generic_file1 << generic_file2
+        end
+
+        subject { image.generic_files }
+
+        it { is_expected.to eq [generic_file1, generic_file2] }
+
+        context "and persisted" do
+          before do
+            image.save
+            image.reload.generic_files
+          end
+
+          it { is_expected.to eq [generic_file1, generic_file2] }
+        end
+      end
+
+      context "when the association contains records" do
+        before do
+          image.generic_files = [generic_file1]
+          image.generic_files << generic_file2
+        end
+
+        subject { image.generic_files }
+
+        it { is_expected.to eq [generic_file1, generic_file2] }
+
+        context "and persisted" do
+          before do
+            image.save
+            image.reload.generic_files
+          end
+
+          it { is_expected.to eq [generic_file1, generic_file2] }
+        end
+      end
+    end
 
     context "a new record, once saved" do
       let(:image) { Image.new }
@@ -43,28 +83,33 @@ describe ActiveFedora::Aggregation::Association do
         it { is_expected.to eq [generic_file1.id, generic_file2.id] }
       end
 
-      it "should be able to delete" do
+      it "is able to be replaced" do
         image.generic_files = [generic_file1]
-        expect(reloaded.generic_files).to eq [generic_file1]
-        expect(reloaded.ordered_generic_files).to eq [generic_file1]
+        image.reload
+        expect(image.generic_files).to eq [generic_file1]
+        expect(image.ordered_generic_files).to eq [generic_file1]
       end
-      it "should be able to be emptied" do
+
+      it "is able to be emptied" do
         image.generic_files = []
         image.save!
-        expect(reloaded.generic_files).to eq []
-        expect(reloaded.ordered_generic_files).to eq []
+        image.reload
+        expect(image.generic_files).to eq []
+        expect(image.ordered_generic_files).to eq []
       end
-      it "should be able to delete a node in the middle" do
+
+      it "is able to replace a node in the middle" do
         image.generic_files << generic_file3
         image.save
         image.generic_files = [ generic_file2, generic_file3 ]
         expect(image.ordered_generic_files).to eq [generic_file2, generic_file3]
-        expect(reloaded.generic_files).to eq [generic_file2, generic_file3]
-        expect(reloaded.ordered_generic_files).to eq [generic_file2, generic_file3]
+        image.reload
+        expect(image.generic_files).to eq [generic_file2, generic_file3]
+        expect(image.ordered_generic_files).to eq [generic_file2, generic_file3]
       end
 
       it "has a first element" do
-        expect(reloaded.generic_files.first).to eq generic_file1
+        expect(image.reload.generic_files.first).to eq generic_file1
       end
     end
 
@@ -105,7 +150,7 @@ describe ActiveFedora::Aggregation::Association do
       end
 
       describe "the association" do
-        subject { reloaded.generic_files }
+        subject { image.reload.generic_files }
         it { is_expected.to eq [generic_file2, generic_file1] }
 
         it "returns an updated array of generic_files" do
@@ -120,11 +165,11 @@ describe ActiveFedora::Aggregation::Association do
         end
 
         it "uses the default predicate" do
-          expect(reloaded.resource.query(predicate: ::RDF::Vocab::ORE.aggregates).count).to eq 2
+          expect(image.reload.resource.query(predicate: ::RDF::Vocab::ORE.aggregates).count).to eq 2
         end
 
         it "associates directly to aggregated resource" do
-          expect(reloaded.resource.query(predicate: ::RDF::Vocab::ORE.aggregates).to_a.first.object).to eq generic_file2.resource.rdf_subject
+          expect(image.reload.resource.query(predicate: ::RDF::Vocab::ORE.aggregates).to_a.first.object).to eq generic_file2.resource.rdf_subject
         end
       end
 
@@ -143,18 +188,18 @@ describe ActiveFedora::Aggregation::Association do
 
       describe "#ordered_*" do
         it "should return an ordered array" do
-          expect(reloaded.ordered_generic_files).to eq [generic_file2, generic_file1]
+          expect(image.reload.ordered_generic_files).to eq [generic_file2, generic_file1]
         end
       end
 
       describe "#head" do
         it "returns the first proxy" do
-          expect(reloaded.head).to be_kind_of ActiveFedora::Aggregation::Proxy
+          expect(image.reload.head).to be_kind_of ActiveFedora::Aggregation::Proxy
         end
       end
       describe "#head_id" do
         it "returns the first proxy" do
-          expect(reloaded.head_id).to be_kind_of String
+          expect(image.reload.head_id).to be_kind_of String
         end
       end
     end
@@ -178,10 +223,8 @@ describe ActiveFedora::Aggregation::Association do
       image.save
     end
 
-    let(:reloaded) { Image.find(image.id) } # because reload doesn't clear this association
-
     describe "the association" do
-      subject { reloaded.files }
+      subject { image.reload.files }
       it { is_expected.to eq [generic_file2, generic_file1] }
     end
   end
@@ -204,10 +247,8 @@ describe ActiveFedora::Aggregation::Association do
       image.save
     end
 
-    let(:reloaded) { Image.find(image.id) } # because reload doesn't clear this association
-
     describe "the association" do
-      subject { reloaded.files }
+      subject { image.reload.files }
       it { is_expected.to eq [generic_file2, generic_file1] }
     end
   end
@@ -227,13 +268,11 @@ describe ActiveFedora::Aggregation::Association do
 
     before do
       image.foos = [generic_file2, generic_file1]
-      image.save
+      image.save!
     end
 
-    let(:reloaded) { Image.find(image.id) } # because reload doesn't clear this association
-
     describe "the association" do
-      subject { reloaded.foos }
+      subject { image.reload.foos }
       it { is_expected.to eq [generic_file2, generic_file1] }
     end
   end
@@ -258,10 +297,8 @@ describe ActiveFedora::Aggregation::Association do
       image.save
     end
 
-    let(:reloaded) { Image.find(image.id) } # because reload doesn't clear this association
-
     describe "the association" do
-      subject { reloaded.generic_files }
+      subject { image.reload.generic_files }
       it { is_expected.to eq [generic_file2, generic_file1] }
 
       it "has a first element" do
@@ -269,10 +306,10 @@ describe ActiveFedora::Aggregation::Association do
       end
 
       it "uses the specified predicate" do
-        query_result = reloaded.resource.query(predicate: predicate)
+        query_result = image.reload.resource.query(predicate: predicate)
         expect(query_result.count).to eq 2
       end
-      subject { reloaded.generic_files }
+
       it { is_expected.to eq [generic_file2, generic_file1] }
     end
   end
