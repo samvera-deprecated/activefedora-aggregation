@@ -91,6 +91,7 @@ describe "Filtering" do
     describe "when the parent association is changed" do
       before do
         image.child_objects = [test_object]
+        image.child_objects.to_a # this would cause the @target of the association to be populated
         image.members = [test_collection]
       end
 
