@@ -23,6 +23,12 @@ module ActiveFedora::Filter
 
     private
 
+      # target should never be cached as part of this objects state, because
+      # extending_from.target could change and we want to reflect those changes
+      def target
+        find_target
+      end
+
       def find_target?
         true
       end
