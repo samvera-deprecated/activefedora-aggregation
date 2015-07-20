@@ -25,6 +25,24 @@ describe ActiveFedora::Aggregation::Association do
       Object.send(:remove_const, :Image)
     end
 
+    describe "#delete" do
+      let(:image) { Image.new }
+      let(:file) { GenericFile.new }
+      context "with an unrelated object" do
+        it "should return an empty set" do
+          expect(image.generic_files.delete(file)).to eq []
+        end
+      end
+      context "with a contained object" do
+        it "should return the deleted objects" do
+          g = GenericFile.new
+          image.generic_files += [g]
+
+          expect(image.generic_files.delete(g, file)).to eq [g]
+        end
+      end
+    end
+
     describe "#concat" do
       let(:image) { Image.new }
       context "when the association is empty" do
