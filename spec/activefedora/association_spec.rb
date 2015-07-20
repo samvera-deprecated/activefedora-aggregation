@@ -85,6 +85,28 @@ describe ActiveFedora::Aggregation::Association do
       end
     end
 
+    describe "#ids_reader" do
+      let(:image) { Image.new }
+      context "with saved members" do
+        before do
+          image.generic_files = [generic_file1, generic_file2]
+          image.save
+        end
+
+        subject { image.reload.generic_file_ids }
+        it { is_expected.to eq [generic_file1.id, generic_file2.id] }
+      end
+
+      context "without members" do
+        before do
+          image.save
+        end
+
+        subject { image.reload.generic_file_ids }
+        it { is_expected.to eq [] }
+      end
+    end
+
     context "a new record, once saved" do
       let(:image) { Image.new }
       before do
@@ -94,11 +116,6 @@ describe ActiveFedora::Aggregation::Association do
 
       it "has persisted the association" do
         expect(image.reload.generic_files).to eq [generic_file1, generic_file2]
-      end
-
-      context "when retrieving ids" do
-        subject { image.reload.generic_file_ids }
-        it { is_expected.to eq [generic_file1.id, generic_file2.id] }
       end
 
       it "is able to be replaced" do

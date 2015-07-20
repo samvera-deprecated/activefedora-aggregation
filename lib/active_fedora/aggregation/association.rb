@@ -21,9 +21,6 @@ module ActiveFedora::Aggregation
           record.id
         end
       else
-        @owner.resource.query(subject: RDF::URI(@owner.uri), predicate: reflection.predicate).map do |s|
-          ActiveFedora::Base.uri_to_id(s.object)
-        end
         proxies = load_proxies_from_solr(fl: 'id, next_ssim, proxyFor_ssim')
         create_linked_list(@owner.head_id, proxies)
       end
