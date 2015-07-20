@@ -21,6 +21,11 @@ module ActiveFedora::Filter
       extending_from.concat(records)
     end
 
+    def ids_reader
+      load_target
+      super
+    end
+
     private
 
       # target should never be cached as part of this objects state, because

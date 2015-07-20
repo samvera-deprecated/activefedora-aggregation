@@ -99,6 +99,12 @@ describe "Filtering" do
         expect(image.child_objects).to eq []
       end
     end
+
+    describe "#_ids" do
+      it "should return just the ids" do
+        expect(image.child_object_ids).to eq [test_object.id]
+      end
+    end
   end
 
   describe "#delete" do
