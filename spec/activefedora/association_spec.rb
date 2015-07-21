@@ -288,6 +288,31 @@ describe ActiveFedora::Aggregation::Association do
     end
   end
 
+  context "with a type validation" do
+    let(:image) { Image.new }
+    let(:parent) { Image.new }
+    before do
+      class TypeValidator
+        def self.validate!(record)
+        end
+      end
+      class Image < ActiveFedora::Base
+        aggregates :files, type_validator: TypeValidator
+      end
+      allow(TypeValidator).to receive(:validate!).with(image).and_raise ActiveFedora::AssociationTypeMismatch
+    end
+    after do
+      Object.send(:remove_const, :Image)
+      Object.send(:remove_const, :TypeValidator)
+    end
+
+    context "when an invalid item is passed" do
+      it "should raise an error" do
+        expect{ parent.files = [image] }.to raise_error ActiveFedora::AssociationTypeMismatch
+      end
+    end
+  end
+
   context "without a defined class or class name (non-existing class)" do
     before do
       class Image < ActiveFedora::Base

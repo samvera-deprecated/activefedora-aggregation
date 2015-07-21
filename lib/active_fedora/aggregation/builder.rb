@@ -2,6 +2,9 @@ module ActiveFedora::Aggregation
   class Builder < ActiveFedora::Associations::Builder::CollectionAssociation
     include ActiveFedora::AutosaveAssociation::AssociationBuilderExtension
     self.macro = :aggregation
+    self.valid_options += [
+      :type_validator
+    ]
 
     def build
       reflection = super
