@@ -299,7 +299,7 @@ describe ActiveFedora::Aggregation::Association do
       class Image < ActiveFedora::Base
         aggregates :files, type_validator: TypeValidator
       end
-      allow(TypeValidator).to receive(:validate!).with(image).and_raise ActiveFedora::AssociationTypeMismatch
+      allow(TypeValidator).to receive(:validate!).with(parent.association(:files),image).and_raise ActiveFedora::AssociationTypeMismatch
     end
     after do
       Object.send(:remove_const, :Image)

@@ -72,7 +72,7 @@ module ActiveFedora::Aggregation
     def raise_on_type_mismatch(record)
       super
       if type_validator
-        type_validator.validate!(record)
+        type_validator.validate!(self,record)
       end
     end
 
