@@ -11,7 +11,7 @@ module ActiveFedora::Aggregation
       model.belongs_to :head, predicate: ::RDF::Vocab::IANA['first'], class_name: 'ActiveFedora::Aggregation::Proxy'
       model.belongs_to :tail, predicate: ::RDF::Vocab::IANA.last, class_name: 'ActiveFedora::Aggregation::Proxy'
 
-      model.send(:setup_persist_links_callback, reflection)
+      model.include AggregationExtension
       reflection
     end
 

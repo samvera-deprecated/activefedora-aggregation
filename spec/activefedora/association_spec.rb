@@ -43,6 +43,20 @@ describe ActiveFedora::Aggregation::Association do
       end
     end
 
+    describe "deleting the aggregation itself" do
+      let(:image) { Image.new }
+      let(:file) { GenericFile.new }
+      before do
+        image.generic_files << file
+        image.save
+      end
+
+      it "removes the proxies" do
+        expect { image.destroy }.to change { ActiveFedora::Aggregation::Proxy.count }.by(-1)
+      end
+
+    end
+
     describe "#concat" do
       let(:image) { Image.new }
       context "when the association is empty" do

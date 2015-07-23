@@ -1,9 +1,10 @@
 module ActiveFedora::Aggregation
   module BaseExtension
     extend ActiveSupport::Concern
-    include PersistLinks
 
     # Queries the RDF graph to find all records that include this object in their aggregations
+    # Since any class may be the target of an aggregation, this must be on every class extending
+    # from ActiveFedora::Base
     # @return [Array] records that include this object in their aggregations
     def aggregated_by
       # In theory you should be able to find the aggregation predicate (ie ore:aggregates)
@@ -16,9 +17,9 @@ module ActiveFedora::Aggregation
 
     private
 
-    def proxy_class
-      ActiveFedora::Aggregation::Proxy
-    end
+      def proxy_class
+        ActiveFedora::Aggregation::Proxy
+      end
 
     module ClassMethods
       ##
@@ -56,15 +57,6 @@ module ActiveFedora::Aggregation
         else
           super
         end
-      end
-
-      def setup_persist_links_callback(reflection)
-        save_method = :"autosave_aggregation_links_for_#{reflection.name}"
-        define_non_cyclic_method(save_method, reflection) { persist_aggregation_links }
-
-        # Doesn't use after_save because we need this callback to come after the autosave callback
-        after_create save_method
-        after_update save_method
       end
     end
   end
