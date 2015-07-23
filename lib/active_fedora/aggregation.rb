@@ -9,6 +9,7 @@ module ActiveFedora
     extend ActiveSupport::Autoload
     eager_autoload do
       autoload :Association
+      autoload :AggregationExtension
       autoload :Proxy
       autoload :Builder
       autoload :Reflection
