@@ -69,16 +69,5 @@ module ActiveFedora::Aggregation
       'ActiveFedora::Aggregation::Proxy'
     end
 
-    def raise_on_type_mismatch(record)
-      super
-      if type_validator
-        type_validator.validate!(self,record)
-      end
-    end
-
-    def type_validator
-      options[:type_validator]
-    end
-
   end
 end
