@@ -79,6 +79,17 @@ describe "Filtering" do
     end
   end
 
+  describe "#size" do
+      it "should return the size" do
+        # Need to persist so that count_records will be called.
+        image.save
+        test_object.save
+        image.members = [test_object]
+
+        expect(image.reload.child_objects.size).to eq 1
+      end
+  end
+
   describe "reading" do
     before do
       image.members = [test_object, test_collection]

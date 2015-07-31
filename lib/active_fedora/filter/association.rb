@@ -26,6 +26,10 @@ module ActiveFedora::Filter
       super
     end
 
+    def count_records
+      ids_reader.length
+    end
+
     private
 
       # target should never be cached as part of this objects state, because
