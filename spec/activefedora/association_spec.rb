@@ -121,6 +121,32 @@ describe ActiveFedora::Aggregation::Association do
       end
     end
 
+    describe "#ids_writer" do
+      let(:image) { Image.new }
+      context "with saved members" do
+        before do
+          image.generic_file_ids = [generic_file1.id, generic_file2.id]
+          image.save
+        end
+
+        subject { image.reload.generic_file_ids }
+        it { is_expected.to eq [generic_file1.id, generic_file2.id] }
+
+        it 'can rearrange members' do
+          image.generic_file_ids = [generic_file2.id, generic_file1.id]
+          image.reload
+          expect(image.generic_file_ids).to eq [generic_file2.id, generic_file1.id]
+          expect(image.generic_files).to eq [generic_file2, generic_file1]
+        end
+        it 'can wipe out members' do
+          image.generic_file_ids = []
+          image.reload
+          expect(image.generic_file_ids).to eq []
+          expect(image.generic_files).to eq []
+        end
+      end
+    end
+
     context "a new record, once saved" do
       let(:image) { Image.new }
       before do
