@@ -119,7 +119,17 @@ describe ActiveFedora::Aggregation::Association do
         subject { image.reload.generic_file_ids }
         it { is_expected.to eq [] }
       end
+
+      context "when the image isn't saved, and other proxies exist" do
+        before do
+          ActiveFedora::Aggregation::Proxy.create!
+        end
+
+        subject { image.generic_file_ids }
+        it { is_expected.to eq [] }
+      end
     end
+
 
     context "a new record, once saved" do
       let(:image) { Image.new }

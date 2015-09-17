@@ -16,6 +16,7 @@ module ActiveFedora::Aggregation
 
     # Implements the ids reader method, e.g. foo.item_ids for Foo.has_many :items
     def ids_reader
+      return [] if @owner.new_record?
       if loaded?
         load_target.map do |record|
           record.id
@@ -30,6 +31,7 @@ module ActiveFedora::Aggregation
 
     # Write a query to find the proxies
     def construct_proxy_query
+      raise "Owner must have an identifier" unless @owner.id
       @proxy_query ||= begin
         clauses = { 'proxyIn' => @owner.id }
         clauses[:has_model] = ActiveFedora::Aggregation::Proxy.to_class_uri
