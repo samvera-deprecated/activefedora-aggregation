@@ -33,6 +33,28 @@ module ActiveFedora::Aggregation
       end
 
       ##
+      # Allows ordering of an association
+      # @example
+      #   class Image < ActiveFedora::Base
+      #     contains :list_resource, class_name:
+      #       "ActiveFedora::Aggregation::ListSource"
+      #     orders :generic_files, through: :list_resource
+      #   end
+      def orders(name, options={})
+        ActiveFedora::Orders::Builder.build(self, name, options)
+      end
+
+      ##
+      # Convenience method for building an ordered aggregation.
+      # @example
+      #   class Image < ActiveFedora::Base
+      #     ordered_aggregation :members, through: :list_source
+      #   end
+      def ordered_aggregation(name, options={})
+        ActiveFedora::Orders::AggregationBuilder.build(self, name, options)
+      end
+
+      ##
       # Create an association filter on the class
       # @example
       #   class Image < ActiveFedora::Base
@@ -52,6 +74,10 @@ module ActiveFedora::Aggregation
           end
         when :filter
           ActiveFedora::Filter::Reflection.new(macro, name, options, active_fedora).tap do |reflection|
+            add_reflection name, reflection
+          end
+        when :orders
+          ActiveFedora::Orders::Reflection.new(macro, name, options, active_fedora).tap do |reflection|
             add_reflection name, reflection
           end
         else

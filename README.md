@@ -15,15 +15,30 @@ end
 
 generic_file1 = GenericFile.create(id: 'file1')
 generic_file2 = GenericFile.create(id: 'file2')
+generic_file3 = GenericFile.create(id: 'file2')
 
 class Image < ActiveFedora::Base
-  aggregates :generic_files
+  ordered_aggregation :generic_files, through: :list_source
 end
 
 image = Image.create(id: 'my_image')
-image.generic_files = [generic_file2, generic_file1]
+image.ordered_generic_file_proxies.append_target generic_file2
+image.ordered_generic_file_proxies.append_target generic_file1
 image.save
+image.generic_files # => [generic_file2, generic_file]
+image.ordered_generic_files # => [generic_file2, generic_file]
 
+# Not all generic files must be ordered.
+image.generic_files += [generic_file3]
+image.generic_files # => [generic_file2, generic_file, generic_file3]
+image.ordered_generic_files # => [generic_file2, generic_file]
+
+# non-ordered accessor is not ordered.
+image.ordered_generic_file_proxies.insert_at(0, generic_file3)
+image.generic_files # => [generic_file2, generic_file, generic_file3]
+image.ordered_generic_files # => [generic_file3, generic_file2, generic_file]
+
+# Deletions
+image.ordered_generic_file_proxies.delete_at(1)
+image.ordered_generic_files # => [generic_file3, generic_file]
 ```
-
-Now the `generic_files` method returns an ordered list of GenericFile objects.
