@@ -76,6 +76,16 @@ describe ActiveFedora::Aggregation::Association do
 
           it { is_expected.to eq [generic_file1, generic_file2] }
         end
+
+        context "and not persisted" do
+          it "should have first predicate set" do
+            expect( image.first ).to eq generic_file1
+          end
+
+          it "should have last predicate set" do
+            expect( image.last ).to eq generic_file2
+          end
+        end
       end
 
       context "when the association contains records" do
