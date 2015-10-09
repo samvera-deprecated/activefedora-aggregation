@@ -3,6 +3,7 @@ require 'active_support'
 require 'active-fedora'
 require 'rdf/vocab'
 require 'active_fedora/filter'
+require 'active_fedora/orders'
 
 module ActiveFedora
   module Aggregation
@@ -25,6 +26,7 @@ module ActiveFedora
       autoload :DecoratorWithArguments
       autoload :DecoratorList
       autoload :ProxyRepository
+      autoload :ListSource
     end
 
     ActiveFedora::Base.include BaseExtension

@@ -1,4 +1,6 @@
 module ActiveFedora::Aggregation
+  ##
+  # Lazily iterates over a doubly linked list, fixing up nodes if necessary.
   class OrderedReader
     include Enumerable
     attr_reader :root
@@ -9,8 +11,12 @@ module ActiveFedora::Aggregation
     def each
       proxy = first_head
       while proxy
-        yield proxy.target
-        proxy = proxy.next
+        yield proxy unless proxy.nil?
+        next_proxy = proxy.next
+        if next_proxy && next_proxy.prev != proxy
+          next_proxy.try(:prev=, proxy)
+        end
+        proxy = next_proxy
       end
     end
 

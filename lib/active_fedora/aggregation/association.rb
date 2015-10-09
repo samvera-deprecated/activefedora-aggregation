@@ -3,7 +3,7 @@ module ActiveFedora::Aggregation
     delegate :first, to: :ordered_reader
 
     def ordered_reader
-      OrderedReader.new(owner).to_a
+      OrderedReader.new(owner).to_a.map(&:target)
     end
 
     def proxy_class

@@ -19,6 +19,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'activesupport'
   spec.add_dependency 'active-fedora'
   spec.add_dependency 'rdf-vocab', '~> 0.8.1'
+  # Lock to RDF 1.1.16 because 1.1.17 causes a bug from ruby 2.2
+  # https://github.com/ruby-rdf/rdf/pull/213
+  spec.add_dependency 'rdf', '~>1.1.16.0'
 
   spec.add_development_dependency "bundler", "~> 1.8"
   spec.add_development_dependency "rake", "~> 10.0"
