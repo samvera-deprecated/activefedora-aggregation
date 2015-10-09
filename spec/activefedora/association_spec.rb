@@ -25,6 +25,26 @@ describe ActiveFedora::Aggregation::Association do
       Object.send(:remove_const, :Image)
     end
 
+    describe "#create_linked_list" do
+      let(:image) { Image.new }
+      let(:association) { image.association(:generic_files) }
+      let(:proxies) { [{ 'id' => head_id, 'proxyIn_ssim' => ['987'], 'next_ssim' => ['456'] },
+                       { 'id' => '456', 'proxyIn_ssim' => ['987'], 'proxyFor_ssim' => ['555'] }] }
+      let(:head_id) { '123' }
+      let(:logger) { Logger.new(STDERR) }
+      before do
+        ActiveFedora::Base.logger = logger
+      end
+
+      context "when there's a proxy that doesn't point at any object" do
+        it "logs an error and returns ids of those that exist" do
+          expect(logger).to receive(:error).with("Found a proxy (id: 123) that has no proxyFor_ssim")
+          val = association.send(:create_linked_list, head_id, proxies)
+          expect(val).to eq ['555']
+        end
+      end
+    end
+
     describe "#delete" do
       let(:image) { Image.new }
       let(:file) { GenericFile.new }

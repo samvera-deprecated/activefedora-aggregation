@@ -56,7 +56,13 @@ module ActiveFedora::Aggregation
       index = remainder.find_index { |n| n.fetch('id') == first_id }
       first = remainder.delete_at(index)
       next_id = first['next_ssim'].try(:first)
-      create_linked_list(next_id, remainder, list + [first.fetch('proxyFor_ssim').first])
+      proxy_for = first.fetch('proxyFor_ssim', []).first
+      if proxy_for
+        create_linked_list(next_id, remainder, list + [proxy_for])
+      else
+        ActiveFedora::Base.logger.error("Found a proxy (id: #{first['id']}) that has no proxyFor_ssim") if ActiveFedora::Base.logger
+        create_linked_list(next_id, remainder, list)
+      end
     end
 
     def default_options
