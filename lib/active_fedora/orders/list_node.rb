@@ -60,16 +60,7 @@ module ActiveFedora::Orders
     end
 
     def target_id
-      uri = nil
-      if @target
-        uri = target.id
-      elsif proxy_for
-        uri = proxy_for
-      end
-      ActiveFedora::Associations::IDComposite.new(
-        [uri],
-        ActiveFedora::Base.translate_uri_to_id
-      ).to_a.first
+      MaybeID.new(@target.try(:id) || proxy_for).value
     end
 
     # Persists target if it's been accessed or set.
@@ -82,18 +73,30 @@ module ActiveFedora::Orders
     end
 
     def proxy_in_id
-      uri = nil
-      if @proxy_in && proxy_in.respond_to?(:id)
-        uri = proxy_in.id
-      elsif proxy_in
-        uri = proxy_in
-      end
-      ActiveFedora::Associations::IDComposite.new(
-        [uri],
-        ActiveFedora::Base.translate_uri_to_id
-      ).to_a.first
+      MaybeID.new(@proxy_in.try(:id) || proxy_in).value
     end
 
+    # Returns an ID whether or not the given value is a URI.
+    class MaybeID
+      attr_reader :uri_or_id
+      def initialize(uri_or_id)
+        @uri_or_id = uri_or_id
+      end
+
+      def value
+        id_composite.new([uri_or_id], translator).to_a.first
+      end
+
+      private
+
+      def id_composite
+        ActiveFedora::Associations::IDComposite
+      end
+
+      def translator
+        ActiveFedora::Base.translate_uri_to_id
+      end
+    end
 
     # Methods necessary for association functionality
     def destroyed?
