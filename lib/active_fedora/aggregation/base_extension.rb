@@ -16,7 +16,7 @@ module ActiveFedora::Aggregation
     end
 
     def ordered_by
-      ordered_by_ids.map{ |x| ActiveFedora::Base.find(x) }
+      ordered_by_ids.lazy.map{ |x| ActiveFedora::Base.find(x) }
     end
 
     private

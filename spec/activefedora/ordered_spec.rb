@@ -35,7 +35,7 @@ RSpec.describe "orders" do
         image.save
         puts image.id
 
-        expect(m.ordered_by).to eq [image]
+        expect(m.ordered_by.to_a).to eq [image]
       end
     end
 
