@@ -32,6 +32,64 @@ RSpec.describe ActiveFedora::Orders::OrderedList do
     end
   end
 
+  describe "#target_ids" do
+    context "from a graph" do
+      let(:head_uri) { RDF::URI.new("parent#bla") }
+      let(:tail_uri) { RDF::URI.new("parent#bla") }
+      it "returns the IDs without building the object" do
+        node_subject = RDF::URI.new("parent#bla")
+        member_uri = RDF::URI.new("http://localhost:8983/fedora/rest/test/member1")
+        parent_uri = RDF::URI.new("parent")
+        graph << [node_subject, RDF::Vocab::ORE.proxyFor, member_uri]
+        graph << [node_subject, RDF::Vocab::ORE.proxyIn, parent_uri]
+        allow(ActiveFedora::Base).to receive(:from_uri)
+
+        expect(subject.target_ids).to eq ["member1"]
+        expect(ActiveFedora::Base).not_to have_received(:from_uri)
+      end
+    end
+    context "from a built up list" do
+      it "returns the IDs" do
+        member = instance_double(ActiveFedora::Base, id: "member1")
+        subject.append_target member
+
+        expect(subject.target_ids).to eq ["member1"]
+      end
+    end
+  end
+
+  describe "#proxy_in" do
+    context "when there's one proxy in" do
+      it "returns it" do
+        member = instance_double(ActiveFedora::Base)
+        subject.append_target member, proxy_in: RDF::URI("http://tar.dis")
+
+        expect(subject.proxy_in).to eq RDF::URI("http://tar.dis")
+      end
+    end
+    context "when the proxy in is an AF::Base object" do
+      it "returns the ID" do
+        member = instance_double(ActiveFedora::Base)
+        owner = instance_double(ActiveFedora::Base, id: "member1")
+        subject.append_target member, proxy_in: owner
+
+        expect(subject.proxy_in).to eq "member1"
+      end
+    end
+    context "when there's two proxy ins" do
+      it "returns the first and throws a warning" do
+        member = instance_double(ActiveFedora::Base)
+        subject.append_target member, proxy_in: RDF::URI("http://tar.dis")
+        subject.append_target member, proxy_in: RDF::URI("http://tar.di")
+        ActiveFedora::Base.logger = Logger.new(STDERR)
+        allow(ActiveFedora::Base.logger).to receive(:warn)
+
+        expect(subject.proxy_in).to eq RDF::URI("http://tar.dis")
+        expect(ActiveFedora::Base.logger).to have_received(:warn).with("WARNING: List contains nodes aggregated under different URIs. Returning only the first.")
+      end
+    end
+  end
+
   describe "#[]" do
     context "with no nodes" do
       it "is always nil" do

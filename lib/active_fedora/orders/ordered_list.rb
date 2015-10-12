@@ -136,6 +136,22 @@ module ActiveFedora
         @changed = false
       end
 
+      # @return IDs of all ordered targets, in order
+      def target_ids
+        to_a.map(&:target_id)
+      end
+
+      # @return The node all proxies are a proxy in.
+      # @note If there are multiple proxy_ins this will log a warning and return
+      #   the first.
+      def proxy_in
+        proxies = to_a.map(&:proxy_in_id).compact.uniq
+        if proxies.length > 1
+          ActiveFedora::Base.logger.warn "WARNING: List contains nodes aggregated under different URIs. Returning only the first." if ActiveFedora::Base.logger
+        end
+        proxies.first
+      end
+
       private
 
       attr_reader :node_cache

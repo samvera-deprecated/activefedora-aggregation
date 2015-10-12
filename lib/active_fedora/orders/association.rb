@@ -12,7 +12,7 @@ module ActiveFedora::Orders
     end
 
     def target_reader
-      ordered_proxies.flat_map(&:target).to_a
+      @target_proxy ||= TargetProxy.new(self)
     end
 
     def find_reflection

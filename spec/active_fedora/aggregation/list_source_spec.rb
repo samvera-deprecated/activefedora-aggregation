@@ -106,4 +106,25 @@ RSpec.describe ActiveFedora::Aggregation::ListSource do
       expect(subject.serializable_hash).not_to have_key "tail"
     end
   end
+
+  describe "#to_solr" do
+    before do
+      class Member < ActiveFedora::Base
+      end
+    end
+    after do
+      Object.send(:remove_const, :Member)
+    end
+    it "can index" do
+      m = Member.create
+      proxy_in = RDF::URI("http://localhost:8983/fedora/rest/test/banana")
+      subject.ordered_self.append_target m, proxy_in: proxy_in
+      expect(subject.to_solr).to include (
+        {
+          ordered_targets_ssim: [m.id],
+          proxy_in_ssi: "banana"
+        }
+      )
+    end
+  end
 end

@@ -59,6 +59,10 @@ module ActiveFedora::Orders
         end
     end
 
+    def target_id
+      MaybeID.new(@target.try(:id) || proxy_for).value
+    end
+
     # Persists target if it's been accessed or set.
     def save_target
       if @target
@@ -68,6 +72,31 @@ module ActiveFedora::Orders
       end
     end
 
+    def proxy_in_id
+      MaybeID.new(@proxy_in.try(:id) || proxy_in).value
+    end
+
+    # Returns an ID whether or not the given value is a URI.
+    class MaybeID
+      attr_reader :uri_or_id
+      def initialize(uri_or_id)
+        @uri_or_id = uri_or_id
+      end
+
+      def value
+        id_composite.new([uri_or_id], translator).to_a.first
+      end
+
+      private
+
+      def id_composite
+        ActiveFedora::Associations::IDComposite
+      end
+
+      def translator
+        ActiveFedora::Base.translate_uri_to_id
+      end
+    end
 
     # Methods necessary for association functionality
     def destroyed?
