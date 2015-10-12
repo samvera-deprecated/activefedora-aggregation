@@ -38,6 +38,12 @@ module ActiveFedora
         super
       end
 
+      def to_solr(solr_doc={})
+        super.merge({
+          ordered_targets_ssim: ordered_self.target_ids
+        })
+      end
+
       private
 
       def persist_ordered_self

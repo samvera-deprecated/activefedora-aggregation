@@ -59,6 +59,19 @@ module ActiveFedora::Orders
         end
     end
 
+    def target_id
+      uri = nil
+      if @target
+        uri = target.id
+      elsif proxy_for
+        uri = proxy_for
+      end
+      ActiveFedora::Associations::IDComposite.new(
+        [uri],
+        ActiveFedora::Base.translate_uri_to_id
+      ).to_a.first
+    end
+
     # Persists target if it's been accessed or set.
     def save_target
       if @target

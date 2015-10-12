@@ -10,6 +10,7 @@ module ActiveFedora
       autoload :Reflection
       autoload :ListNode
       autoload :OrderedList
+      autoload :TargetProxy
     end
   end
 end

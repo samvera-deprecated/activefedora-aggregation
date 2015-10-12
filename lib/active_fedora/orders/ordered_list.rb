@@ -136,6 +136,11 @@ module ActiveFedora
         @changed = false
       end
 
+      # Returns the IDs of all ordered targets, in order
+      def target_ids
+        to_a.map(&:target_id)
+      end
+
       private
 
       attr_reader :node_cache
