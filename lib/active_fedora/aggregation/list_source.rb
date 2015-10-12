@@ -40,7 +40,8 @@ module ActiveFedora
 
       def to_solr(solr_doc={})
         super.merge({
-          ordered_targets_ssim: ordered_self.target_ids
+          ordered_targets_ssim: ordered_self.target_ids,
+          proxy_in_ssi: ordered_self.proxy_in.to_s
         })
       end
 

@@ -81,6 +81,19 @@ module ActiveFedora::Orders
       end
     end
 
+    def proxy_in_id
+      uri = nil
+      if @proxy_in && proxy_in.respond_to?(:id)
+        uri = proxy_in.id
+      elsif proxy_in
+        uri = proxy_in
+      end
+      ActiveFedora::Associations::IDComposite.new(
+        [uri],
+        ActiveFedora::Base.translate_uri_to_id
+      ).to_a.first
+    end
+
 
     # Methods necessary for association functionality
     def destroyed?

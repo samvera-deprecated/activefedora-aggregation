@@ -58,6 +58,38 @@ RSpec.describe ActiveFedora::Orders::OrderedList do
     end
   end
 
+  describe "#proxy_in" do
+    context "when there's one proxy in" do
+      it "returns it" do
+        member = instance_double(ActiveFedora::Base)
+        subject.append_target member, proxy_in: RDF::URI("http://tar.dis")
+
+        expect(subject.proxy_in).to eq RDF::URI("http://tar.dis")
+      end
+    end
+    context "when the proxy in is an AF::Base object" do
+      it "returns the ID" do
+        member = instance_double(ActiveFedora::Base)
+        owner = instance_double(ActiveFedora::Base, id: "member1")
+        subject.append_target member, proxy_in: owner
+
+        expect(subject.proxy_in).to eq "member1"
+      end
+    end
+    context "when there's two proxy ins" do
+      it "returns the first and throws a warning" do
+        member = instance_double(ActiveFedora::Base)
+        subject.append_target member, proxy_in: RDF::URI("http://tar.dis")
+        subject.append_target member, proxy_in: RDF::URI("http://tar.di")
+        ActiveFedora::Base.logger = Logger.new(STDERR)
+        allow(ActiveFedora::Base.logger).to receive(:warn)
+
+        expect(subject.proxy_in).to eq RDF::URI("http://tar.dis")
+        expect(ActiveFedora::Base.logger).to have_received(:warn).with("WARNING: List contains nodes aggregated under different URIs. Returning only the first.")
+      end
+    end
+  end
+
   describe "#[]" do
     context "with no nodes" do
       it "is always nil" do
