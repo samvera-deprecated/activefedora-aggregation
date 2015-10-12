@@ -24,6 +24,18 @@ RSpec.describe "orders" do
       expect(subject.list_source).not_to be_changed
     end
   end
+
+  describe "#ordered_members" do
+    describe "<<" do
+      it "can append" do
+        member = Member.new
+        subject.ordered_members << member
+        expect(subject.ordered_members).to eq [member]
+        expect(subject.members).to eq [member]
+        expect(subject.ordered_member_proxies.to_a.length).to eq 1
+      end
+    end
+  end
   describe "append_target" do
     it "doesn't add all members" do
       member = Member.new
