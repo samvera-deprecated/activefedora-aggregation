@@ -25,6 +25,33 @@ RSpec.describe "orders" do
     end
   end
 
+  describe "ordered_by" do
+    let(:image) { Image.new }
+
+    context "an element aggregated by one record" do
+      it "can find the record that contains it" do
+        m = Member.create
+        image.ordered_members << m
+        image.save
+        puts image.id
+
+        expect(m.ordered_by).to eq [image]
+      end
+    end
+
+    context "an element aggregated by multiple records" do
+      let(:image2) { Image.new }
+      it "can find all of the records that contain it" do
+        m = Member.create
+        image.ordered_members << m
+        image2.ordered_members << m
+        image.save
+        image2.save
+        expect(m.ordered_by).to contain_exactly(image2,image)
+      end
+    end
+  end
+
   describe "#ordered_members" do
     describe "<<" do
       it "can append" do
