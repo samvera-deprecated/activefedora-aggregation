@@ -198,6 +198,11 @@ describe ActiveFedora::Aggregation::Association do
         ActiveFedora::Aggregation::Proxy.create(container: image, target: generic_file1)
       end
 
+      context "for an element without an id" do
+        subject { GenericFile.new.aggregated_by }
+        it { is_expected.to be_empty }
+      end
+
       context "an element aggregated by one record" do
         subject { generic_file1 }
         it "can find the record that contains it" do
