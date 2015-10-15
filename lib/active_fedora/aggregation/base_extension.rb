@@ -12,6 +12,7 @@ module ActiveFedora::Aggregation
       #   https://jira.duraspace.org/browse/FCREPO-1497
       # so we have to look up the proxies asserting RDF::Vocab::ORE.proxyFor
       # and return their containers.
+      return [] unless id
       proxy_class.where(proxyFor_ssim: id).map(&:container)
     end
 
