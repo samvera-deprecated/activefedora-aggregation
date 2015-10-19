@@ -33,7 +33,6 @@ RSpec.describe "orders" do
         m = Member.create
         image.ordered_members << m
         image.save
-        puts image.id
 
         expect(m.ordered_by.to_a).to eq [image]
       end
@@ -54,12 +53,34 @@ RSpec.describe "orders" do
 
   describe "#ordered_members" do
     describe "<<" do
-      it "can append" do
+      it "appends" do
         member = Member.new
         subject.ordered_members << member
         expect(subject.ordered_members).to eq [member]
         expect(subject.members).to eq [member]
         expect(subject.ordered_member_proxies.to_a.length).to eq 1
+      end
+    end
+    describe "#=" do
+      it "sets ordered members" do
+        member = Member.new
+        member_2 = Member.new
+        subject.ordered_members << member
+        expect(subject.ordered_members).to eq [member]
+        subject.ordered_members = [member_2, member_2]
+        expect(subject.ordered_members).to eq [member_2, member_2]
+        # Removing from ordering is not the same as removing from aggregation.
+        expect(subject.members).to eq [member, member_2]
+      end
+    end
+    describe "+=" do
+      it "appends ordered members" do
+        member = Member.new
+        member_2 = Member.new
+        subject.ordered_members << member
+        subject.ordered_members += [member, member_2]
+        expect(subject.ordered_members).to eq [member, member, member_2]
+        expect(subject.ordered_member_proxies.map(&:target)).to eq [member, member, member_2]
       end
     end
   end

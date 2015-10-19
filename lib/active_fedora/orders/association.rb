@@ -11,6 +11,14 @@ module ActiveFedora::Orders
       super
     end
 
+    # Meant to override all nodes with the given nodes.
+    # @param [Array<ActiveFedora::Base>] nodes Nodes to set as ordered members
+    def target_writer(nodes)
+      target_reader.clear
+      target_reader.concat(nodes)
+      target_reader
+    end
+
     def target_reader
       @target_proxy ||= TargetProxy.new(self)
     end
@@ -61,7 +69,7 @@ module ActiveFedora::Orders
 
     # Delete multiple list nodes.
     # @param [Array<ActiveFedora::Orders::ListNode>] records
-    def delete_records(records, _method)
+    def delete_records(records, _method=nil)
       records.each do |record|
         delete_record(record)
       end
@@ -70,7 +78,7 @@ module ActiveFedora::Orders
     # Delete a list node
     # @param [ActiveFedora::Orders::ListNode] record Node to delete.
     def delete_record(record)
-      list_container.delete_node(record)
+      target.delete_node(record)
     end
 
     def insert_record(record, force=true, validate=true)
