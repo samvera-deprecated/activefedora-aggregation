@@ -9,6 +9,7 @@ module ActiveFedora
 
       def <<(obj)
         association.append_target(obj)
+        self
       end
 
       def concat(objs)

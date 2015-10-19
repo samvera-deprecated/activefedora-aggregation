@@ -55,7 +55,7 @@ RSpec.describe "orders" do
     describe "<<" do
       it "appends" do
         member = Member.new
-        subject.ordered_members << member
+        expect(subject.ordered_members << member).to eq [member]
         expect(subject.ordered_members).to eq [member]
         expect(subject.members).to eq [member]
         expect(subject.ordered_member_proxies.to_a.length).to eq 1
@@ -78,7 +78,7 @@ RSpec.describe "orders" do
         member = Member.new
         member_2 = Member.new
         subject.ordered_members << member
-        subject.ordered_members += [member, member_2]
+        expect(subject.ordered_members += [member, member_2]).to eq [member, member, member_2]
         expect(subject.ordered_members).to eq [member, member, member_2]
         expect(subject.ordered_member_proxies.map(&:target)).to eq [member, member, member_2]
       end
