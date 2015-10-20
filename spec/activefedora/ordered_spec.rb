@@ -38,6 +38,13 @@ RSpec.describe "orders" do
       end
     end
 
+    context "a new element" do
+      it "returns an empty array" do
+        m = Member.new
+        expect(m.ordered_by.to_a).to eq []
+      end
+    end
+
     context "an element aggregated by multiple records" do
       let(:image2) { Image.new }
       it "can find all of the records that contain it" do
