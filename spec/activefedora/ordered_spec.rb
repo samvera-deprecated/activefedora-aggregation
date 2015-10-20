@@ -58,6 +58,15 @@ RSpec.describe "orders" do
     end
   end
 
+  it "can load from solr" do
+    member = Member.new
+    subject.ordered_members << member
+    subject.save!
+    solr_doc = ActiveFedora::SolrService.query("id:#{subject.id}").first
+
+    expect{ActiveFedora::Base.load_instance_from_solr(subject.id, solr_doc)}.not_to raise_error
+  end
+
   describe "#ordered_members" do
     describe "<<" do
       it "appends" do
@@ -129,8 +138,8 @@ RSpec.describe "orders" do
       subject.reload
       expect(subject.ordered_members).to eq [member, member]
       expect(subject.list_source.resource.query([nil, ::RDF::Vocab::ORE.proxyIn, subject.resource.rdf_subject]).to_a.length).to eq 2
-      expect(subject.head_id).to eq subject.list_source.head_id
-      expect(subject.tail_id).to eq subject.list_source.tail_id
+      expect(subject.head_ids).to eq subject.list_source.head_id
+      expect(subject.tail_ids).to eq subject.list_source.tail_id
     end
     it "can add already persisted items" do
       member = Member.create

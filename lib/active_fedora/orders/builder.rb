@@ -24,8 +24,8 @@ module ActiveFedora::Orders
 
     def build
       super.tap do
-        model.property :head, predicate: ::RDF::Vocab::IANA['first'], multiple: false
-        model.property :tail, predicate: ::RDF::Vocab::IANA.last, multiple: false
+        model.property :head, predicate: ::RDF::Vocab::IANA['first']
+        model.property :tail, predicate: ::RDF::Vocab::IANA.last
       end
     end
 
