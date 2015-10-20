@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'activesupport'
-  spec.add_dependency 'active-fedora'
+  spec.add_dependency 'active-fedora', '~> 9.5'
   spec.add_dependency 'rdf-vocab', '~> 0.8.1'
   # Lock to RDF 1.1.16 because 1.1.17 causes a bug from ruby 2.2
   # https://github.com/ruby-rdf/rdf/pull/213
