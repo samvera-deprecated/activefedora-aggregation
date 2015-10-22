@@ -68,7 +68,7 @@ module ActiveFedora
       end
 
       def has_unpersisted_proxy_for?
-        ordered_self.flat_map(&:target).compact.select(&:new_record?).find{|x| x.respond_to?(:uri)}
+        ordered_self.select(&:new_record?).map(&:target).find{|x| x.respond_to?(:uri)}
       end
 
       def head_subject

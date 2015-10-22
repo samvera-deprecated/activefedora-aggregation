@@ -41,7 +41,7 @@ module ActiveFedora::Orders
     # @return [ActiveFedora::Orders::ListNode::Resource]
     def to_graph
       g = Resource.new(rdf_subject)
-      g.proxy_for = target.try(:uri)
+      g.proxy_for = ActiveFedora::Base.id_to_uri(target_id)
       g.proxy_in = proxy_in.try(:uri)
       g.next = self.next.try(:rdf_subject)
       g.prev = self.prev.try(:rdf_subject)
