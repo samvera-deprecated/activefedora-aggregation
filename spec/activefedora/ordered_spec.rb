@@ -221,6 +221,18 @@ RSpec.describe "orders" do
       subject.ordered_member_proxies.delete_at(1)
       expect(subject.ordered_members).to eq [member, member]
     end
+    it "returns the node" do
+      member = Member.new
+      subject.ordered_members << member
+      subject.ordered_members << member
+      second_node = subject.ordered_member_proxies[1]
+      expect(subject.ordered_member_proxies.delete_at(1)).to eq second_node
+    end
+    context "when the node doesn't exist" do
+      it "returns nil" do
+        expect(subject.ordered_member_proxies.delete_at(0)).to eq nil
+      end
+    end
     it "doesn't do anything if passed a bad value" do
       member = Member.new
       subject.ordered_member_proxies.append_target member
