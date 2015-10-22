@@ -99,6 +99,16 @@ RSpec.describe "orders" do
         expect(subject.ordered_member_proxies.map(&:target)).to eq [member, member, member_2]
       end
     end
+    describe "#delete_at" do
+      it "deletes that position" do
+        member = Member.new
+        member_2 = Member.new
+        subject.ordered_members += [member, member_2]
+
+        subject.ordered_members.delete_at(0)
+        expect(subject.ordered_members).to eq [member_2]
+      end
+    end
   end
   describe "append_target" do
     it "doesn't add all members" do
