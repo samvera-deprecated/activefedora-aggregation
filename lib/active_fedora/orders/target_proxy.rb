@@ -3,6 +3,7 @@ module ActiveFedora
     class TargetProxy
       attr_reader :association
       delegate :+, to: :to_a
+      delegate :delete_at, to: :association
       def initialize(association)
         @association = association
       end
