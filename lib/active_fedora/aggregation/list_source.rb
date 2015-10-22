@@ -50,8 +50,9 @@ module ActiveFedora
       def persist_ordered_self
         nodes_will_change!
         # Delete old statements
-        ordered_list_factory.new(resource, head_subject, tail_subject).to_graph.statements.each do |s|
-          resource.delete s
+        subj = resource.subjects.to_a.select{|x| x.to_s.split("/").last.to_s.include?("#g")}
+        subj.each do |s|
+          resource.delete [s, nil, nil]
         end
         # Assert head and tail
         self.head = ordered_self.head.next.rdf_subject
