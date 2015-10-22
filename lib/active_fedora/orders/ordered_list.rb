@@ -101,18 +101,20 @@ module ActiveFedora
           node.prev.next = next_node
           node.next.prev = prev_node
           @changed = true
+          node
+        else
+          nil
         end
-        self
       end
 
       # @param [Integer] loc Index of node to delete.
       def delete_at(loc)
-        return self if loc == nil
+        return nil if loc == nil
         arr = ordered_reader.take(loc+1)
         if arr.length == loc+1
           delete_node(arr.last)
         else
-          self
+          nil
         end
       end
 
