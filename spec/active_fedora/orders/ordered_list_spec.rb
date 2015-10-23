@@ -299,7 +299,7 @@ RSpec.describe ActiveFedora::Orders::OrderedList do
 
   describe "#to_graph" do
     it "creates a good graph" do
-      member = instance_double(ActiveFedora::Base, uri: RDF::URI("http://test.org"))
+      member = instance_double(ActiveFedora::Base, id: '123/456')
       owner = instance_double(ActiveFedora::Base, uri: RDF::URI("http://owner.org"))
       subject.append_target member
       subject.append_target member, proxy_in: owner
