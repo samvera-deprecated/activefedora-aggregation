@@ -16,6 +16,7 @@ module ActiveFedora
       end
 
       # Ordered list representation of proxies in graph.
+      # @return [Array<ListNode>]
       def ordered_self
         @ordered_self ||= ordered_list_factory.new(resource, head_subject, tail_subject)
       end
