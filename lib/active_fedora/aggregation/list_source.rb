@@ -11,6 +11,12 @@ module ActiveFedora
         super
       end
 
+      # Overriding so that we don't track previously_changed, which was
+      # rather expensive.
+      def clear_changed_attributes
+        @changed_attributes.clear
+      end
+
       def changed?
         super || ordered_self.changed?
       end
