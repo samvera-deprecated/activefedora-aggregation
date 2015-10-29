@@ -39,10 +39,7 @@ module ActiveFedora
       # @note This method is used by ActiveFedora::Base upstream for indexing,
       #   at https://github.com/projecthydra/active_fedora/blob/master/lib/active_fedora/profile_indexing_service.rb.
       def serializable_hash(options=nil)
-        options ||= {}
-        options[:except] ||= []
-        options[:except] += [:head, :tail, :nodes]
-        super
+        {}
       end
 
       def to_solr(solr_doc={})
@@ -50,6 +47,21 @@ module ActiveFedora
           ordered_targets_ssim: ordered_self.target_ids,
           proxy_in_ssi: ordered_self.proxy_in.to_s
         })
+      end
+
+      # Not useful and slows down indexing.
+      def create_date
+        nil
+      end
+
+      # Not useful, slows down indexing.
+      def modified_date
+        nil
+      end
+
+      # Not useful, slows down indexing.
+      def has_model
+        ["ActiveFedora::Aggregation::ListSource"]
       end
 
       private
