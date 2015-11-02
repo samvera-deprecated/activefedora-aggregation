@@ -105,8 +105,44 @@ RSpec.describe "orders" do
         member_2 = Member.new
         subject.ordered_members += [member, member_2]
 
-        subject.ordered_members.delete_at(0)
+        expect(subject.ordered_members.delete_at(0)).to eq member
         expect(subject.ordered_members).to eq [member_2]
+      end
+    end
+    describe "#insert_at" do
+      it "adds at a given position" do
+        member = Member.new
+        member_2 = Member.new
+        subject.ordered_members += [member, member_2]
+        
+        subject.ordered_members.insert_at(0, member_2)
+        expect(subject.ordered_members).to eq [member_2, member, member_2]
+      end
+    end
+    describe "lazy loading" do
+      it "does not instantiate every record on append" do
+        member = Member.new
+        member_2 = Member.new
+        subject.ordered_members += [member, member_2]
+        subject.save
+        allow(ActiveFedora::Base).to receive(:find).and_call_original
+
+        reloaded = subject.class.find(subject.id)
+        reloaded.ordered_members << member
+
+        expect(ActiveFedora::Base).not_to have_received(:find).with(member_2.id)
+      end
+      it "does not instantiate every record on #insert_at" do
+        member = Member.new
+        member_2 = Member.new
+        subject.ordered_members += [member, member_2]
+        subject.save
+        allow(ActiveFedora::Base).to receive(:find).and_call_original
+
+        reloaded = subject.class.find(subject.id)
+        reloaded.ordered_members.insert_at(0, member)
+
+        expect(ActiveFedora::Base).not_to have_received(:find).with(member_2.id)
       end
     end
   end
