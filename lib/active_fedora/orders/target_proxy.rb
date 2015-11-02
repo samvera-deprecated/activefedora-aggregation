@@ -3,7 +3,6 @@ module ActiveFedora
     class TargetProxy
       attr_reader :association
       delegate :+, to: :to_a
-      delegate :delete_at, to: :association
       def initialize(association)
         @association = association
       end
@@ -18,6 +17,18 @@ module ActiveFedora
           self.<<(obj)
         end
         self
+      end
+
+      def insert_at(loc, record)
+        association.insert_target_at(loc, record)
+        self
+      end
+
+      def delete_at(loc)
+        result = association.delete_at(loc)
+        if result
+          result.target
+        end
       end
 
       def clear
