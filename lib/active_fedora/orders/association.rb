@@ -6,6 +6,10 @@ module ActiveFedora::Orders
       @target = find_target
     end
 
+    def inspect
+      "#<ActiveFedora::Orders::Association:#{object_id}>"
+    end
+
     def reader(*args)
       @proxy ||= ActiveFedora::Orders::CollectionProxy.new(self)
       super
