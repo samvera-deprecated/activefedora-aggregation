@@ -93,6 +93,19 @@ module ActiveFedora
         end
       end
 
+      # @param [Integer] loc Location to insert target at
+      # @param [String] proxy_for proxyFor to add
+      def insert_proxy_for_at(loc, proxy_for, proxy_in: nil)
+        node = build_node(new_node_subject)
+        node.proxy_for = proxy_for
+        node.proxy_in = proxy_in
+        if loc == 0
+          append_to(node, head)
+        else
+          append_to(node, ordered_reader.take(loc).last)
+        end
+      end
+
       # @param [ListNode] node Node to delete
       def delete_node(node)
         node = ordered_reader.find{|x| x == node}

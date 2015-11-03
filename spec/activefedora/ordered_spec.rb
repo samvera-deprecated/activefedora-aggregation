@@ -231,6 +231,29 @@ RSpec.describe "orders" do
       expect(subject.ordered_members).to eq [member, member2, member2, member]
     end
   end
+  describe "insert_target_id_at" do
+    it "can add between items" do
+      member = Member.create
+      member2 = Member.create
+      subject.ordered_members += [member, member2]
+
+      allow(ActiveFedora::Base).to receive(:find).and_call_original
+      subject.ordered_member_proxies.insert_target_id_at(1, member2.id)
+      expect(ActiveFedora::Base).not_to have_received(:find).with(member2.id)
+      expect(subject.ordered_members).to eq [member, member2, member2]
+      expect(ActiveFedora::Base).to have_received(:find).with(member2.id)
+    end
+    context "when given a nil id" do
+      it "raises an ArgumentError" do
+        expect{subject.ordered_member_proxies.insert_target_id_at(0, nil)}.to raise_error ArgumentError, "ID can not be nil"
+      end
+    end
+    context "when given an ID not in members" do
+      it "raises an ArgumentError" do
+        expect{subject.ordered_member_proxies.insert_target_id_at(0, "test")}.to raise_error "test is not a part of members"
+      end
+    end
+  end
   describe "-=" do
     it "can remove proxies" do
       member = Member.new
