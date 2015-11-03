@@ -65,6 +65,17 @@ module ActiveFedora::Orders
       target.insert_at(loc, record, proxy_in: owner)
     end
 
+    # Insert a target ID in a specific position
+    # @param [Integer] loc Position to insert record ID
+    # @param [String] id ID of record to insert.
+    def insert_target_id_at(loc, id)
+      raise ArgumentError.new "ID can not be nil" if id.nil?
+      unless unordered_association.ids_reader.include?(id)
+        raise ArgumentError.new "#{id} is not a part of #{unordered_association.reflection.name}"
+      end
+      target.insert_proxy_for_at(loc, ActiveFedora::Base.id_to_uri(id), proxy_in: owner)
+    end
+
     # Delete whatever node is at a specific position
     # @param [Integer] loc Position to delete
     def delete_at(loc)
