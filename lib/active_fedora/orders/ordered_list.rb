@@ -137,6 +137,12 @@ module ActiveFedora
         @changed
       end
 
+      # Marks this ordered list as about to change. Useful for when changing
+      # proxies individually.
+      def order_will_change!
+        @changed = true
+      end
+
       # @return [::RDF::Graph] Graph representation of this list.
       def to_graph
         ::RDF::Graph.new.tap do |g|

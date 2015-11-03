@@ -19,6 +19,15 @@ RSpec.describe ActiveFedora::Aggregation::ListSource do
     end
   end
 
+  describe "#order_will_change!" do
+    it "marks it as changed" do
+      expect(subject).not_to be_changed
+      subject.order_will_change!
+      expect(subject).to be_changed
+      expect(subject.ordered_self).to be_changed
+    end
+  end
+
   describe "#tail" do
     it "should be nil by default" do
       expect(subject.tail).to eq nil
