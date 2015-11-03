@@ -118,6 +118,14 @@ RSpec.describe "orders" do
         subject.ordered_members.insert_at(0, member_2)
         expect(subject.ordered_members).to eq [member_2, member, member_2]
       end
+      it "adds a proxy_in statement" do
+        member = Member.new
+        member_2 = Member.new
+        subject.ordered_members += [member, member_2]
+
+        subject.ordered_members.insert_at(0, member_2)
+        expect(subject.ordered_member_proxies.map(&:proxy_in).uniq).to eq [subject]
+      end
     end
     describe "lazy loading" do
       it "does not instantiate every record on append" do

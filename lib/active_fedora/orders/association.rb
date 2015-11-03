@@ -62,7 +62,7 @@ module ActiveFedora::Orders
       unless unordered_association.target.include?(record)
         unordered_association.concat(record)
       end
-      target.insert_at(loc, record)
+      target.insert_at(loc, record, proxy_in: owner)
     end
 
     # Delete whatever node is at a specific position
