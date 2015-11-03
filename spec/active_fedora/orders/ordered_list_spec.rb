@@ -32,6 +32,14 @@ RSpec.describe ActiveFedora::Orders::OrderedList do
     end
   end
 
+  describe "#order_will_change!" do
+    it "marks it as changed" do
+      expect(subject).not_to be_changed
+      subject.order_will_change!
+      expect(subject).to be_changed
+    end
+  end
+
   describe "#target_ids" do
     context "from a graph" do
       let(:head_uri) { RDF::URI.new("parent#bla") }
