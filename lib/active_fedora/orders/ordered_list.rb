@@ -82,9 +82,10 @@ module ActiveFedora
 
       # @param [Integer] loc Location to insert target at
       # @param [ActiveFedora::Base] target Target to insert
-      def insert_at(loc, target)
+      def insert_at(loc, target, proxy_in: nil)
         node = build_node(new_node_subject)
         node.target = target
+        node.proxy_in = proxy_in
         if loc == 0
           append_to(node, head)
         else
