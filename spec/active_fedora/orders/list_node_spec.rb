@@ -44,6 +44,30 @@ RSpec.describe ActiveFedora::Orders::ListNode do
     end
   end
 
+  describe "#target_uri" do
+    context "with a null target_id" do
+      it "returns nil" do
+        expect(subject.target_uri).to eq nil
+      end
+    end
+    context "with a target" do
+      before do
+        class Member < ActiveFedora::Base
+        end
+      end
+      after do
+        Object.send(:remove_const, :Member)
+      end
+      it "returns a built URI" do
+        m = Member.new
+        allow(m).to receive(:id).and_return("test")
+        subject.target = m
+
+        expect(subject.target_uri).to eq "http://localhost:8983/fedora/rest/test/test"
+      end
+    end
+  end
+
   describe "#target_id" do
     context "when a target is set" do
       it "returns its id" do
@@ -113,6 +137,14 @@ RSpec.describe ActiveFedora::Orders::ListNode do
 
         expect(subject.proxy_in_id).to eq member.id
         expect(ActiveFedora::Base).not_to have_received(:from_uri)
+      end
+    end
+  end
+
+  describe "#to_graph" do
+    context "with no data" do
+      it "returns an empty graph" do
+        expect(subject.to_graph.statements.to_a.length).to eq 0
       end
     end
   end
