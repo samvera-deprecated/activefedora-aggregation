@@ -51,7 +51,7 @@ module ActiveFedora::Orders
     # Object representation of proxyFor
     # @return [ActiveFedora::Base]
     def target
-      @target ||= 
+      @target ||=
         if proxy_for.present?
           node_cache.fetch(proxy_for) do
             ActiveFedora::Base.from_uri(proxy_for, nil)
