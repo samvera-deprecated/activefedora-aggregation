@@ -4,7 +4,7 @@ module ActiveFedora
       delegate :order_will_change!, to: :ordered_self
       property :head, predicate: ::RDF::Vocab::IANA['first'], multiple: false
       property :tail, predicate: ::RDF::Vocab::IANA.last, multiple: false
-      property :nodes, predicate: ::RDF::DC::hasPart
+      property :nodes, predicate: ::RDF::Vocab::DC::hasPart
 
       def save(*args)
         return true if has_unpersisted_proxy_for? || !changed?
