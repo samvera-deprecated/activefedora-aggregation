@@ -24,11 +24,20 @@ module ActiveFedora
         self
       end
 
+      # Deletes the element at the specified index, returning that element, or nil if
+      # the index is out of range.
       def delete_at(loc)
         result = association.delete_at(loc)
         if result
           result.target
         end
+      end
+
+      # Deletes all items from self that are equal to obj.
+      # @param obj the object to remove from the list
+      # @return the last deleted item, or nil if no matching item is found
+      def delete(obj)
+        association.delete_target(obj)
       end
 
       def clear

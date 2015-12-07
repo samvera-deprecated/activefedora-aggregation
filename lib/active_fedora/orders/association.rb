@@ -82,6 +82,12 @@ module ActiveFedora::Orders
       target.delete_at(loc)
     end
 
+    # Delete all occurences of the specified target
+    # @param obj object to delete
+    def delete_target(obj)
+      target.delete_target(obj)
+    end
+
     # Delete multiple list nodes.
     # @param [Array<ActiveFedora::Orders::ListNode>] records
     def delete_records(records, _method=nil)

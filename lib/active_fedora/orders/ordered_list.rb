@@ -30,7 +30,7 @@ module ActiveFedora
       # @return [TailSentinel] Sentinel for the bottom of the list. If not
       #   empty, tail.prev is the first element.
       def tail
-        @tail ||= 
+        @tail ||=
           begin
             if tail_subject
               TailSentinel.new(self, prev_node: build_node(tail_subject))
@@ -71,7 +71,7 @@ module ActiveFedora
       end
 
       # @param [ActiveFedora::Base] target Target to append to list.
-      # @option [::RDF::URI, ActiveFedora::Base] :proxy_in Proxy in to 
+      # @option [::RDF::URI, ActiveFedora::Base] :proxy_in Proxy in to
       #   assert on the created node.
       def append_target(target, proxy_in: nil)
         node = build_node(new_node_subject)
@@ -130,6 +130,13 @@ module ActiveFedora
         else
           nil
         end
+      end
+
+      # @param obj target of node to delete.
+      def delete_target(obj)
+        nodes_to_remove = ordered_reader.select { |list_node| obj.id == list_node.target_id }
+        nodes_to_remove.each { |list_node| delete_node(list_node) }
+        nodes_to_remove.last.try(:target)
       end
 
       # @return [Boolean] Whether this list was changed since instantiation.

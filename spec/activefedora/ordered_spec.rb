@@ -109,12 +109,36 @@ RSpec.describe "orders" do
         expect(subject.ordered_members).to eq [member_2]
       end
     end
+
+    describe "#delete" do
+      let(:member) { Member.create }
+      let(:member_2) { Member.create }
+      before do
+        subject.ordered_members += [member, member_2, member]
+        subject.save!
+      end
+
+      context "with an object found in the list" do
+        it "deletes all occurences of the object" do
+          expect(subject.ordered_members.delete(member)).to eq member
+          expect(subject.ordered_members.to_a).to eq [member_2]
+        end
+      end
+
+      context "with an object not found in the list" do
+        it "returns nil" do
+          expect(subject.ordered_members.delete(Member.create)).to be_nil
+          expect(subject.ordered_members.to_a).to eq [member, member_2, member]
+        end
+      end
+    end
+
     describe "#insert_at" do
       it "adds at a given position" do
         member = Member.new
         member_2 = Member.new
         subject.ordered_members += [member, member_2]
-        
+
         subject.ordered_members.insert_at(0, member_2)
         expect(subject.ordered_members).to eq [member_2, member, member_2]
       end
