@@ -146,6 +146,7 @@ RSpec.describe ActiveFedora::Orders::OrderedList do
         graph << [node_subject, RDF::Vocab::ORE.proxyFor, member_uri]
         graph << [node_subject, RDF::Vocab::ORE.proxyIn, parent_uri]
         expect(subject.first.proxy_for).to eq member_uri
+        expect(subject.first.proxy_for).to be_kind_of RDF::URI
         expect(subject.first.proxy_in).to eq parent_uri
         expect(subject.first).not_to eq nil
       end
@@ -316,6 +317,7 @@ RSpec.describe ActiveFedora::Orders::OrderedList do
 
       expect(graph.statements.to_a.length).to eq 5
       expect(graph.subjects.to_a).to eq subject.to_a.map(&:rdf_subject)
+      expect(graph.query([nil, RDF::Vocab::ORE.proxyFor, nil]).to_a.last.object).to be_kind_of RDF::URI
     end
   end
 

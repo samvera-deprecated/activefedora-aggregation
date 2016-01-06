@@ -61,7 +61,7 @@ module ActiveFedora::Orders
 
     def target_uri
       if target_id
-        ActiveFedora::Base.id_to_uri(target_id)
+        RDF::URI(ActiveFedora::Base.id_to_uri(target_id))
       end
     end
 
