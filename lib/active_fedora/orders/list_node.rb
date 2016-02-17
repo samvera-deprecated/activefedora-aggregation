@@ -60,7 +60,9 @@ module ActiveFedora::Orders
     end
 
     def target_uri
-      if target_id
+      if target_id.kind_of?(::RDF::URI)
+        target_id
+      elsif target_id
         RDF::URI(ActiveFedora::Base.id_to_uri(target_id))
       end
     end
