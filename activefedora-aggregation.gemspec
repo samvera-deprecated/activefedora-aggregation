@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'activesupport'
-  spec.add_dependency 'active-fedora', '~> 9.5'
+  spec.add_dependency 'active-fedora', '~> 9.9'
   spec.add_dependency 'rdf-vocab', '~> 0.8.1'
   # Avoid RDF 1.1.17 because of a bug from ruby 2.2
   # https://github.com/ruby-rdf/rdf/pull/213
@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.8"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.2"
-  spec.add_development_dependency "jettywrapper"
   spec.add_development_dependency "pry-byebug"
+  spec.add_development_dependency "solr_wrapper", "~> 0.4"
+  spec.add_development_dependency 'fcrepo_wrapper', '~> 0.2'
 end

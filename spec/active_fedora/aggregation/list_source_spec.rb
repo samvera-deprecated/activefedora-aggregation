@@ -126,7 +126,7 @@ RSpec.describe ActiveFedora::Aggregation::ListSource do
     end
     it "can index" do
       m = Member.create
-      proxy_in = RDF::URI("http://localhost:8983/fedora/rest/test/banana")
+      proxy_in = RDF::URI("http://localhost:#{ENV['FCREPO_TEST_PORT']}/rest/test/banana")
       subject.ordered_self.append_target m, proxy_in: proxy_in
       expect(subject.to_solr).to include (
         {
