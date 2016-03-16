@@ -9,3 +9,5 @@
 /tmp/
 /jetty
 logfile.log
+fcrepo4-data/
+fcrepo4-test-data/

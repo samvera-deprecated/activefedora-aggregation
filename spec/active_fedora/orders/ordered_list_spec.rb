@@ -46,7 +46,7 @@ RSpec.describe ActiveFedora::Orders::OrderedList do
       let(:tail_uri) { RDF::URI.new("parent#bla") }
       it "returns the IDs without building the object" do
         node_subject = RDF::URI.new("parent#bla")
-        member_uri = RDF::URI.new("http://localhost:8983/fedora/rest/test/member1")
+        member_uri = RDF::URI.new("http://localhost:#{ENV['FCREPO_TEST_PORT']}/rest/test/member1")
         parent_uri = RDF::URI.new("parent")
         graph << [node_subject, RDF::Vocab::ORE.proxyFor, member_uri]
         graph << [node_subject, RDF::Vocab::ORE.proxyIn, parent_uri]
