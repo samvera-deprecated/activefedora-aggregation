@@ -22,10 +22,35 @@ module ActiveFedora::Orders
       super
     end
 
+    module FixFirstLast
+      def save(*args)
+        super.tap do |result|
+          if result
+            apply_first_and_last
+          end
+        end
+      end
+      def save!(*args)
+        super.tap do |result|
+          if result
+            apply_first_and_last
+          end
+        end
+      end
+    end
+
     def build
-      super.tap do
+      super.tap do |result|
         model.property :head, predicate: ::RDF::Vocab::IANA['first']
         model.property :tail, predicate: ::RDF::Vocab::IANA.last
+        model.send(:define_method, :apply_first_and_last) do
+          source = send(result.options[:through])
+          return if head.map(&:rdf_subject) == source.head_id && tail.map(&:rdf_subject) == source.tail_id
+          self.head = source.head_id
+          self.tail = source.tail_id
+          save! if changed?
+        end
+        model.include ActiveFedora::Orders::Builder::FixFirstLast
       end
     end
 

@@ -71,10 +71,21 @@ RSpec.describe "orders" do
     describe "<<" do
       it "appends" do
         member = Member.new
+        subject.save!
         expect(subject.ordered_members << member).to eq [member]
         expect(subject.ordered_members).to eq [member]
         expect(subject.members).to eq [member]
         expect(subject.ordered_member_proxies.to_a.length).to eq 1
+        subject.save!
+        expect(subject.head).not_to be_blank
+        expect(subject.reload.head).not_to be_blank
+      end
+      it "maintains member associations" do
+        member = Member.create
+        subject.ordered_members << member
+        subject.save
+        subject.reload
+        expect(subject.members).to eq [member]
       end
     end
     describe "#=" do
