@@ -63,7 +63,7 @@ RSpec.describe ActiveFedora::Orders::ListNode do
         allow(m).to receive(:id).and_return("test")
         subject.target = m
 
-        expect(subject.target_uri).to eq "http://localhost:#{ENV['FCREPO_TEST_PORT']}/rest/test/test"
+        expect(subject.target_uri).to eq ActiveFedora::Base.translate_id_to_uri.call("test")
       end
     end
   end
