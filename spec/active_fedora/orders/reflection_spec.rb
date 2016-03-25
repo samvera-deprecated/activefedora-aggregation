@@ -1,10 +1,11 @@
 require 'spec_helper'
 
 RSpec.describe ActiveFedora::Orders::Reflection do
-  subject { described_class.new(macro, name, options, active_fedora) }
+  subject { described_class.new(macro, name, scope, options, active_fedora) }
   let(:macro) { :orders }
   let(:name) { "ordered_member_proxies" }
   let(:options) { {} }
+  let(:scope) { nil }
   let(:active_fedora) { double("active_fedora") }
 
   describe "#klass" do

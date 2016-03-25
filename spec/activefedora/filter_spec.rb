@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Filtering" do
   before do
     class Image < ActiveFedora::Base
-      aggregates :members, class_name: "ActiveFedora::Base"
+      ordered_aggregation :members, through: :list_source, class_name: 'ActiveFedora::Base'
 
       filters_association :members, as: :child_objects, condition: :pcdm_object?
       filters_association :members, as: :child_collections, condition: :pcdm_collection?
@@ -43,6 +43,7 @@ describe "Filtering" do
   describe "setting" do
     context "when an incorrect object type is sent" do
       it "raises an error" do
+        image.child_collections
         expect { image.child_collections = [test_object] }.to raise_error ArgumentError
       end
     end

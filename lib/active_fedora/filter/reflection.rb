@@ -10,7 +10,7 @@ module ActiveFedora::Filter
     end
 
     def extending_from
-      @extending_from ||= active_fedora.reflect_on_association(options.fetch(:extending_from))
+      @extending_from ||= active_fedora._reflect_on_association(options.fetch(:extending_from))
     end
 
     def collection?

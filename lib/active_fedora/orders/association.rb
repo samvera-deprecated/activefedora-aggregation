@@ -12,6 +12,7 @@ module ActiveFedora::Orders
 
     def reader(*args)
       @proxy ||= ActiveFedora::Orders::CollectionProxy.new(self)
+      @null_proxy ||= ActiveFedora::Orders::CollectionProxy.new(self)
       super
     end
 
@@ -144,11 +145,11 @@ module ActiveFedora::Orders
     end
 
     def unordered_association
-      owner.association(ordered_reflection_name)
+      owner.association(unordered_reflection_name)
     end
 
-    def ordered_reflection_name
-      reflection.ordered_reflection.name
+    def unordered_reflection_name
+      reflection.unordered_reflection.name
     end
   end
 end

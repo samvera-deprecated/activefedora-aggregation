@@ -79,25 +79,6 @@ module ActiveFedora::Aggregation
         name = options.delete(:as)
         ActiveFedora::Filter::Builder.build(self, name, options.merge(extending_from: extending_from))
       end
-
-      def create_reflection(macro, name, options, active_fedora)
-        case macro
-        when :aggregation
-          Reflection.new(macro, name, options, active_fedora).tap do |reflection|
-            add_reflection name, reflection
-          end
-        when :filter
-          ActiveFedora::Filter::Reflection.new(macro, name, options, active_fedora).tap do |reflection|
-            add_reflection name, reflection
-          end
-        when :orders
-          ActiveFedora::Orders::Reflection.new(macro, name, options, active_fedora).tap do |reflection|
-            add_reflection name, reflection
-          end
-        else
-          super
-        end
-      end
     end
   end
 end

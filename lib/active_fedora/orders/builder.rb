@@ -1,8 +1,13 @@
 module ActiveFedora::Orders
   class Builder < ActiveFedora::Associations::Builder::CollectionAssociation
     include ActiveFedora::AutosaveAssociation::AssociationBuilderExtension
-    self.macro = :orders
-    self.valid_options += [:through, :ordered_reflection]
+    def self.macro
+      :orders
+    end
+
+    def self.valid_options(options)
+      super + [:through, :unordered_reflection]
+    end
 
     def self.define_readers(mixin, name)
       super
@@ -14,12 +19,35 @@ module ActiveFedora::Orders
       end
     end
 
-    def initialize(model, name, options)
-      @original_name = name
-      @model = model
+    def self.build(model, name, options)
+      options = { unordered_reflection: unordered_reflection(model, name)}.merge(options)
       name = :"ordered_#{name.to_s.singularize}_proxies"
-      options = {ordered_reflection: ordered_reflection}.merge(options)
+      model.property :head, predicate: ::RDF::Vocab::IANA['first']
+      model.property :tail, predicate: ::RDF::Vocab::IANA.last
+      model.send(:define_method, :apply_first_and_last) do
+        source = send(options[:through])
+        source.save
+        return if head.map(&:rdf_subject) == source.head_id && tail.map(&:rdf_subject) == source.tail_id
+        self.head = source.head_id
+        self.tail = source.tail_id
+        save! if changed?
+      end
+      model.include ActiveFedora::Orders::Builder::FixFirstLast
       super
+    end
+
+    def self.create_reflection(model, name, scope, options, extension = nil)
+      unless name.is_a?(Symbol)
+        name = name.to_sym
+        Deprecation.warn(ActiveFedora::Base, "association names must be a Symbol")
+      end
+      validate_options(options)
+      translate_property_to_predicate(options)
+
+      scope = build_scope(scope, extension)
+      name = better_name(name)
+
+      ActiveFedora::Orders::Reflection.create(macro, name, scope, options, model)
     end
 
     module FixFirstLast
@@ -39,29 +67,14 @@ module ActiveFedora::Orders
       end
     end
 
-    def build
-      super.tap do |result|
-        model.property :head, predicate: ::RDF::Vocab::IANA['first']
-        model.property :tail, predicate: ::RDF::Vocab::IANA.last
-        model.send(:define_method, :apply_first_and_last) do
-          source = send(result.options[:through])
-          return if head.map(&:rdf_subject) == source.head_id && tail.map(&:rdf_subject) == source.tail_id
-          self.head = source.head_id
-          self.tail = source.tail_id
-          save! if changed?
-        end
-        model.include ActiveFedora::Orders::Builder::FixFirstLast
-      end
-    end
-
     private
 
     def self.target_accessor(name)
       name.to_s.gsub("_proxies","").pluralize
     end
 
-    def ordered_reflection
-      model.reflect_on_association(@original_name)
+    def self.unordered_reflection(model, original_name)
+      model._reflect_on_association(original_name)
     end
   end
 end
